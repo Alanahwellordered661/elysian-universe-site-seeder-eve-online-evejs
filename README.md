@@ -9,10 +9,10 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/JohnElysian/elysian-universe-site-seeder-eve-online-evejs/actions/workflows/ci.yml"><img alt="Build" src="https://img.shields.io/github/actions/workflow/status/JohnElysian/elysian-universe-site-seeder-eve-online-evejs/ci.yml?branch=main&label=build"></a>
-  <a href="https://github.com/JohnElysian/elysian-universe-site-seeder-eve-online-evejs/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/JohnElysian/elysian-universe-site-seeder-eve-online-evejs?label=release"></a>
-  <img alt="License" src="https://img.shields.io/badge/license-AGPL--3.0--or--later-2af6ff">
-  <img alt="Platforms" src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-ff7aad">
+  <a href="https://github.com/JohnElysian/elysian-universe-site-seeder-eve-online-evejs/actions/workflows/ci.yml"><img alt="Windows, Linux, and macOS build" src="https://img.shields.io/github/actions/workflow/status/JohnElysian/elysian-universe-site-seeder-eve-online-evejs/ci.yml?branch=main&label=Windows%20%2B%20Linux%20%2B%20macOS&style=for-the-badge&logo=githubactions&logoColor=white&cacheSeconds=300"></a>
+  <a href="https://github.com/JohnElysian/elysian-universe-site-seeder-eve-online-evejs/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/JohnElysian/elysian-universe-site-seeder-eve-online-evejs?label=Release&style=for-the-badge&logo=github&logoColor=white&cacheSeconds=300"></a>
+  <img alt="Platforms" src="https://img.shields.io/badge/Platforms-Windows%20%7C%20Linux%20%7C%20macOS-ff7aad?style=for-the-badge">
+  <img alt="License" src="https://img.shields.io/badge/License-AGPL--3.0--or--later-2af6ff?style=for-the-badge">
 </p>
 
 <p align="center">
