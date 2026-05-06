@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/readme/hero-universe-site-seeder-v1.svg" alt="Elysian Universe Site Seeder banner">
+  <img src="assets/readme/hero-universe-site-seeder-v2.svg" alt="Elysian Universe Site Seeder banner">
 </p>
 
 <h1 align="center">Elysian Universe Site Seeder</h1>
@@ -40,15 +40,15 @@
 <table>
   <tr>
     <td align="center"><strong>39,570</strong><br>desired universe sites</td>
-    <td align="center"><strong>39,596</strong><br>runtime instances</td>
+    <td align="center"><strong>8.287s</strong><br>full seeder reconcile</td>
     <td align="center"><strong>8,490</strong><br>systems loaded</td>
-    <td align="center"><strong>36.887s</strong><br>full local reconcile</td>
+    <td align="center"><strong>0</strong><br>created / replaced / removed</td>
   </tr>
   <tr>
     <td align="center"><strong>6,057</strong><br>site templates</td>
     <td align="center"><strong>23</strong><br>spawn families</td>
-    <td align="center"><strong>5,207</strong><br>stations loaded</td>
-    <td align="center"><strong>17,179</strong><br>localized mission messages</td>
+    <td align="center"><strong>14.846s</strong><br>full CLI wall time</td>
+    <td align="center"><strong>4.45x</strong><br>faster than the old receipt</td>
   </tr>
 </table>
 
@@ -96,16 +96,25 @@ line tools on macOS or build-essential/pkg-config packages on Linux.
 ## Full Universe Scale
 
 <p align="center">
-  <img src="assets/readme/universe-scale-v1.svg" alt="Full universe site seed scale numbers">
+  <img src="assets/readme/universe-scale-v2.svg" alt="Full universe site seed scale numbers">
 </p>
 
-This is built for the big EVE JS universe state, not a toy demo.
+This is built for the big EVE JS universe state, not a toy demo. The current
+full-state pass is absurdly fast: it walks the full universe, confirms every
+seeded site, and exits with zero churn.
 
 | Dataset / operation | Result |
 | --- | ---: |
-| Full local reconcile | 36.887s |
+| Full seeder reconcile | 8.287s |
+| Full CLI wall time | 14.846s |
+| Previous published reconcile receipt | 36.887s |
+| Speed-up vs previous receipt | 4.45x |
 | Desired persistent universe sites | 39,570 |
-| Persisted runtime instances | 39,596 |
+| Retained seeded instances | 39,570 |
+| Created / replaced / removed instances | 0 / 0 / 0 |
+| Mining rows created / removed | 0 / 0 |
+| Broad persistent definitions | 39,432 |
+| Generated mining definitions | 138 |
 | EVE systems loaded by runtime | 8,490 |
 | Stations loaded by runtime | 5,207 |
 | Celestials loaded by runtime | 121,242 |
@@ -119,8 +128,9 @@ This is built for the big EVE JS universe state, not a toy demo.
 | Local dungeon authority graph | 64.26MB |
 | Local sharded mining state | 97.02MB |
 
-Numbers are from the current EVE JS universe data and the seeder's full
-reconcile metadata.
+Numbers are from a full public-entrypoint benchmark on May 7, 2026 against the
+current EVE JS universe data, using `--force-reseed-universe --force-live
+--batch-size 192`.
 
 ## The App
 
