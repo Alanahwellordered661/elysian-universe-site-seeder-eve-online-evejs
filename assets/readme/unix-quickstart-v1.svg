@@ -1,0 +1,11 @@
+<svg width="1500" height="390" viewBox="0 0 1500 390" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Linux and macOS quickstart</title>
+  <desc id="desc">Two command Linux and macOS quickstart for Elysian Universe Site Seeder.</desc>
+  <rect width="1500" height="390" rx="26" fill="#07111d"/>
+  <text x="76" y="82" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="46" font-weight="900">Linux and macOS: tiny command path</text>
+  <text x="76" y="120" fill="#b8c6d8" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="24">Clone, run the installer, pick your EVE JS folder. The script builds the native Rust GUI for your platform.</text>
+  <rect x="76" y="168" width="1348" height="148" rx="18" fill="#081522" stroke="#2af6ff" stroke-width="2"/>
+  <text x="112" y="224" fill="#51ffd0" font-family="JetBrains Mono, Consolas, monospace" font-size="28" font-weight="800">git clone https://github.com/JohnElysian/elysian-universe-site-seeder-eve-online-evejs.git</text>
+  <text x="112" y="272" fill="#51ffd0" font-family="JetBrains Mono, Consolas, monospace" font-size="28" font-weight="800">cd elysian-universe-site-seeder-eve-online-evejs &amp;&amp; chmod +x *.sh &amp;&amp; ./Install.sh</text>
+  <text x="76" y="354" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="22">After setup, launch any time with ./StartUniverseSeeder.sh</text>
+</svg>

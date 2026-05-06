@@ -1,0 +1,76 @@
+<svg width="1600" height="620" viewBox="0 0 1600 620" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Elysian Universe Site Seeder hero</title>
+  <desc id="desc">Cinematic EVE Online universe site seeder banner with scale statistics for EVE JS.</desc>
+  <defs>
+    <radialGradient id="core" cx="50%" cy="36%" r="74%">
+      <stop offset="0%" stop-color="#1c4e66"/>
+      <stop offset="42%" stop-color="#111c2c"/>
+      <stop offset="100%" stop-color="#070a12"/>
+    </radialGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2af6ff"/>
+      <stop offset="100%" stop-color="#51ffd0"/>
+    </linearGradient>
+    <linearGradient id="rose" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff7aad"/>
+      <stop offset="100%" stop-color="#ffd27a"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d1725" stop-opacity="0.94"/>
+      <stop offset="100%" stop-color="#101421" stop-opacity="0.9"/>
+    </linearGradient>
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="18" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.04 0 0 0 0 0.9 0 0 0 0 1 0 0 0 .55 0"/>
+      <feBlend in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="620" rx="30" fill="url(#core)"/>
+  <g opacity="0.55">
+    <path d="M-80 430C220 310 376 370 626 260C876 150 1048 106 1684 118" stroke="#26f4ff" stroke-width="3"/>
+    <path d="M-60 512C244 410 396 470 666 330C934 190 1162 230 1664 176" stroke="#ff7aad" stroke-width="2"/>
+    <path d="M-60 300C210 246 418 296 650 214C880 132 1104 86 1664 58" stroke="#ffd27a" stroke-width="2"/>
+  </g>
+  <g opacity="0.16">
+    <circle cx="1170" cy="96" r="210" fill="#2af6ff"/>
+    <circle cx="1272" cy="88" r="150" fill="#ff7aad"/>
+    <circle cx="1218" cy="150" r="320" fill="#ffffff"/>
+  </g>
+  <g filter="url(#softGlow)">
+    <ellipse cx="1210" cy="188" rx="350" ry="80" stroke="#2af6ff" stroke-width="2" opacity="0.45" transform="rotate(-12 1210 188)"/>
+    <ellipse cx="1210" cy="188" rx="448" ry="112" stroke="#ff7aad" stroke-width="2" opacity="0.34" transform="rotate(-12 1210 188)"/>
+    <ellipse cx="1210" cy="188" rx="560" ry="142" stroke="#ffd27a" stroke-width="2" opacity="0.28" transform="rotate(-12 1210 188)"/>
+  </g>
+  <rect x="70" y="64" width="1460" height="492" rx="28" fill="url(#panel)" stroke="#243856" stroke-width="2"/>
+  <text x="118" y="124" fill="#2af6ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="22" font-weight="800">JOHN ELYSIAN PRESENTS</text>
+  <text x="116" y="208" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="74" font-weight="900">Elysian Universe Site Seeder</text>
+  <text x="120" y="258" fill="#b8c6d8" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="30" font-weight="500">EVE Online anomalies, generated mining sites, persistent dungeon state, and universe-scale site seeding for EVE JS.</text>
+  <g>
+    <rect x="118" y="322" width="326" height="132" rx="18" fill="#0c2a36" stroke="#2af6ff" stroke-width="2"/>
+    <text x="144" y="382" fill="#2af6ff" font-family="JetBrains Mono, Consolas, monospace" font-size="48" font-weight="900">39,570</text>
+    <text x="146" y="420" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="26" font-weight="800">desired universe sites</text>
+  </g>
+  <g>
+    <rect x="482" y="322" width="326" height="132" rx="18" fill="#302414" stroke="#ffd27a" stroke-width="2"/>
+    <text x="508" y="382" fill="#ffd27a" font-family="JetBrains Mono, Consolas, monospace" font-size="48" font-weight="900">8,490</text>
+    <text x="510" y="420" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="26" font-weight="800">systems reconciled</text>
+  </g>
+  <g>
+    <rect x="846" y="322" width="326" height="132" rx="18" fill="#331426" stroke="#ff7aad" stroke-width="2"/>
+    <text x="872" y="382" fill="#ff7aad" font-family="JetBrains Mono, Consolas, monospace" font-size="48" font-weight="900">23</text>
+    <text x="874" y="420" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="26" font-weight="800">spawn families</text>
+  </g>
+  <g>
+    <rect x="1210" y="322" width="254" height="132" rx="18" fill="#152334" stroke="#7ce7ff" stroke-width="2"/>
+    <text x="1236" y="382" fill="#7ce7ff" font-family="JetBrains Mono, Consolas, monospace" font-size="48" font-weight="900">36.9s</text>
+    <text x="1238" y="420" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="24" font-weight="800">full reconcile</text>
+  </g>
+  <path d="M118 500H374" stroke="#2af6ff" stroke-width="2" opacity="0.5"/>
+  <path d="M432 500H688" stroke="#ffd27a" stroke-width="2" opacity="0.5"/>
+  <path d="M746 500H1002" stroke="#ff7aad" stroke-width="2" opacity="0.5"/>
+  <path d="M1060 500H1464" stroke="#7ce7ff" stroke-width="2" opacity="0.5"/>
+  <text x="118" y="530" fill="#2af6ff" font-family="JetBrains Mono, Consolas, monospace" font-size="25" font-weight="800">39,596 runtime instances</text>
+  <text x="432" y="530" fill="#ffd27a" font-family="JetBrains Mono, Consolas, monospace" font-size="25" font-weight="800">6,057 site templates</text>
+  <text x="746" y="530" fill="#ff7aad" font-family="JetBrains Mono, Consolas, monospace" font-size="25" font-weight="800">17,179 localized mission messages</text>
+  <text x="1060" y="530" fill="#7ce7ff" font-family="JetBrains Mono, Consolas, monospace" font-size="25" font-weight="800">Node + Rust native GUI</text>
+</svg>

@@ -1,0 +1,33 @@
+<svg width="1500" height="420" viewBox="0 0 1500 420" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Installer checks</title>
+  <desc id="desc">Installer checks for Node, Rust, native linkers, disk space, EVE JS paths, and health check.</desc>
+  <rect width="1500" height="420" rx="26" fill="#08111c"/>
+  <text x="76" y="82" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="46" font-weight="900">One-click means it checks the annoying stuff</text>
+  <text x="76" y="120" fill="#b8c6d8" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="24">The installer does the boring work before anyone can hit a weird linker wall.</text>
+  <g transform="translate(76 176)">
+    <rect width="208" height="120" rx="16" fill="#0b2935" stroke="#2af6ff" stroke-width="2"/>
+    <text x="28" y="54" fill="#2af6ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="28" font-weight="900">Node LTS</text>
+    <text x="28" y="88" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="19">required by EVE JS</text>
+  </g>
+  <g transform="translate(314 176)">
+    <rect width="208" height="120" rx="16" fill="#302414" stroke="#ffd27a" stroke-width="2"/>
+    <text x="28" y="54" fill="#ffd27a" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="28" font-weight="900">Rust</text>
+    <text x="28" y="88" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="19">stable toolchain</text>
+  </g>
+  <g transform="translate(552 176)">
+    <rect width="250" height="120" rx="16" fill="#331426" stroke="#ff7aad" stroke-width="2"/>
+    <text x="28" y="54" fill="#ff7aad" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="28" font-weight="900">Native linker</text>
+    <text x="28" y="88" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="19">MSVC, Xcode, build-essential</text>
+  </g>
+  <g transform="translate(832 176)">
+    <rect width="208" height="120" rx="16" fill="#102033" stroke="#7ce7ff" stroke-width="2"/>
+    <text x="28" y="54" fill="#7ce7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="28" font-weight="900">Disk space</text>
+    <text x="28" y="88" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="19">before building</text>
+  </g>
+  <g transform="translate(1070 176)">
+    <rect width="354" height="120" rx="16" fill="#101d2e" stroke="#51ffd0" stroke-width="2"/>
+    <text x="28" y="54" fill="#51ffd0" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="28" font-weight="900">Read-only health check</text>
+    <text x="28" y="88" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="19">confirms EVE JS before launch</text>
+  </g>
+  <text x="76" y="356" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="22">The app starts by inspecting. It only writes when you choose Seed Universe or Force Rebuild.</text>
+</svg>

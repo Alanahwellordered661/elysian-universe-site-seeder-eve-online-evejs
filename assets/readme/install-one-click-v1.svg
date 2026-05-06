@@ -1,0 +1,37 @@
+<svg width="1500" height="420" viewBox="0 0 1500 420" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">One click install flow</title>
+  <desc id="desc">Four step install flow for Elysian Universe Site Seeder.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#07111d"/>
+      <stop offset="1" stop-color="#15101d"/>
+    </linearGradient>
+  </defs>
+  <rect width="1500" height="420" rx="26" fill="url(#bg)"/>
+  <text x="76" y="82" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="48" font-weight="900">Install should feel obvious</text>
+  <text x="76" y="120" fill="#b8c6d8" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="24">One folder picker, automatic checks, native build fallback, then the GUI opens ready for your EVE JS checkout.</text>
+  <g transform="translate(76 174)">
+    <rect width="290" height="164" rx="18" fill="#0b2935" stroke="#2af6ff" stroke-width="2"/>
+    <text x="26" y="54" fill="#2af6ff" font-family="JetBrains Mono, Consolas, monospace" font-size="34" font-weight="900">01</text>
+    <text x="26" y="96" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="26" font-weight="900">Run Install.bat</text>
+    <text x="26" y="132" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="19">or ./Install.sh</text>
+  </g>
+  <g transform="translate(414 174)">
+    <rect width="290" height="164" rx="18" fill="#302414" stroke="#ffd27a" stroke-width="2"/>
+    <text x="26" y="54" fill="#ffd27a" font-family="JetBrains Mono, Consolas, monospace" font-size="34" font-weight="900">02</text>
+    <text x="26" y="96" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="26" font-weight="900">Pick EVE JS</text>
+    <text x="26" y="132" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="19">path saved locally</text>
+  </g>
+  <g transform="translate(752 174)">
+    <rect width="290" height="164" rx="18" fill="#331426" stroke="#ff7aad" stroke-width="2"/>
+    <text x="26" y="54" fill="#ff7aad" font-family="JetBrains Mono, Consolas, monospace" font-size="34" font-weight="900">03</text>
+    <text x="26" y="96" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="26" font-weight="900">Auto checks</text>
+    <text x="26" y="132" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="19">Node, Rust, linker, disk</text>
+  </g>
+  <g transform="translate(1090 174)">
+    <rect width="334" height="164" rx="18" fill="#102033" stroke="#7ce7ff" stroke-width="2"/>
+    <text x="26" y="54" fill="#7ce7ff" font-family="JetBrains Mono, Consolas, monospace" font-size="34" font-weight="900">04</text>
+    <text x="26" y="96" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="26" font-weight="900">Inspect, seed, rebuild</text>
+    <text x="26" y="132" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="19">GUI starts in read-only mode</text>
+  </g>
+</svg>

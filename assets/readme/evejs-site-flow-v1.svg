@@ -1,0 +1,42 @@
+<svg width="1500" height="500" viewBox="0 0 1500 500" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">EVE JS site seeding flow</title>
+  <desc id="desc">Flow from EVE JS checkout through site inspection and seeded universe state.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#06101a"/>
+      <stop offset="1" stop-color="#101827"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="18" markerHeight="18" refX="13" refY="9" orient="auto">
+      <path d="M2 2L16 9L2 16Z" fill="#2af6ff"/>
+    </marker>
+  </defs>
+  <rect width="1500" height="500" rx="26" fill="url(#bg)"/>
+  <text x="74" y="82" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="46" font-weight="900">Made to sit beside EVE JS</text>
+  <text x="74" y="122" fill="#b8c6d8" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="24">The tool reads your EVE JS data layout, uses the EVE JS runtime services, and writes the universe site state those services expect.</text>
+  <g transform="translate(84 188)">
+    <rect width="272" height="184" rx="18" fill="#0b2935" stroke="#2af6ff" stroke-width="2"/>
+    <text x="30" y="68" fill="#2af6ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="30" font-weight="900">EVE JS checkout</text>
+    <text x="30" y="112" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="20">server/src/newDatabase/data</text>
+    <text x="30" y="148" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="20">runtime services</text>
+  </g>
+  <path d="M386 280H486" stroke="#2af6ff" stroke-width="4" marker-end="url(#arrow)"/>
+  <g transform="translate(516 188)">
+    <rect width="272" height="184" rx="18" fill="#302414" stroke="#ffd27a" stroke-width="2"/>
+    <text x="30" y="68" fill="#ffd27a" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="30" font-weight="900">Inspect first</text>
+    <text x="30" y="112" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="20">read-only status pass</text>
+    <text x="30" y="148" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="20">server-active guard</text>
+  </g>
+  <path d="M818 280H918" stroke="#2af6ff" stroke-width="4" marker-end="url(#arrow)"/>
+  <g transform="translate(948 188)">
+    <rect width="272" height="184" rx="18" fill="#331426" stroke="#ff7aad" stroke-width="2"/>
+    <text x="30" y="68" fill="#ff7aad" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="30" font-weight="900">Seed universe</text>
+    <text x="30" y="112" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="20">reconcile persistent sites</text>
+    <text x="30" y="148" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="20">generated mining rows</text>
+  </g>
+  <path d="M1250 280H1350" stroke="#2af6ff" stroke-width="4" marker-end="url(#arrow)"/>
+  <g transform="translate(1370 218)">
+    <circle cx="42" cy="62" r="54" fill="#102033" stroke="#7ce7ff" stroke-width="2"/>
+    <text x="42" y="55" fill="#7ce7ff" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="22" font-weight="900">LIVE</text>
+    <text x="42" y="82" fill="#eef7ff" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="17" font-weight="800">DATA</text>
+  </g>
+</svg>
