@@ -15,6 +15,14 @@ function normalizeText(value, fallback = "") {
   return normalized || fallback;
 }
 
+const ACTIVE_RUNTIME_LIFECYCLES = ["seeded", "active", "paused"];
+const SECURITY_BAND_ORDER = {
+  highsec: 0,
+  lowsec: 1,
+  nullsec: 2,
+  wormhole: 3,
+};
+
 function formatTimestamp(date = new Date()) {
   const pad = (value) => String(value).padStart(2, "0");
   return [
@@ -171,6 +179,77 @@ function detectServerActive(port, timeoutMs = 400) {
   });
 }
 
+function buildSystemBatches(systemIDs, batchSize) {
+  const ids = Array.isArray(systemIDs) ? systemIDs : [];
+  const size = Math.max(16, toInt(batchSize, 192));
+  const batches = [];
+  for (let offset = 0; offset < ids.length; offset += size) {
+    batches.push(ids.slice(offset, offset + size));
+  }
+  return batches;
+}
+
+function buildSystemBatchIndex(systemBatches) {
+  const indexBySystemID = new Map();
+  (Array.isArray(systemBatches) ? systemBatches : []).forEach((batch, batchIndex) => {
+    for (const systemID of Array.isArray(batch) ? batch : []) {
+      indexBySystemID.set(toInt(systemID, 0), batchIndex);
+    }
+  });
+  return indexBySystemID;
+}
+
+function getDefinitionSecurityBand(definition) {
+  return normalizeText(
+    definition && definition.metadata && definition.metadata.securityBand,
+    normalizeText(definition && definition.spawnState && definition.spawnState.securityBand, ""),
+  ).toLowerCase();
+}
+
+function getDefinitionSlotIndex(definition) {
+  return Math.max(
+    0,
+    toInt(
+      definition && definition.metadata && definition.metadata.slotIndex,
+      definition && definition.spawnState && definition.spawnState.slotIndex,
+    ),
+  );
+}
+
+function compareBroadDefinitionOrder(left, right, systemBatchIndexByID) {
+  const leftSystemID = toInt(left && left.solarSystemID, 0);
+  const rightSystemID = toInt(right && right.solarSystemID, 0);
+  const leftBatch = systemBatchIndexByID.has(leftSystemID)
+    ? systemBatchIndexByID.get(leftSystemID)
+    : Number.MAX_SAFE_INTEGER;
+  const rightBatch = systemBatchIndexByID.has(rightSystemID)
+    ? systemBatchIndexByID.get(rightSystemID)
+    : Number.MAX_SAFE_INTEGER;
+  if (leftBatch !== rightBatch) {
+    return leftBatch - rightBatch;
+  }
+
+  const leftBand = SECURITY_BAND_ORDER[getDefinitionSecurityBand(left)] ?? Number.MAX_SAFE_INTEGER;
+  const rightBand = SECURITY_BAND_ORDER[getDefinitionSecurityBand(right)] ?? Number.MAX_SAFE_INTEGER;
+  if (leftBand !== rightBand) {
+    return leftBand - rightBand;
+  }
+
+  if (leftSystemID !== rightSystemID) {
+    return leftSystemID - rightSystemID;
+  }
+
+  const leftSlot = getDefinitionSlotIndex(left);
+  const rightSlot = getDefinitionSlotIndex(right);
+  if (leftSlot !== rightSlot) {
+    return leftSlot - rightSlot;
+  }
+
+  return normalizeText(left && left.siteKey, "").localeCompare(
+    normalizeText(right && right.siteKey, ""),
+  );
+}
+
 function summarizeRuntimeFamilies() {
   const families = dungeonAuthority.listUniverseSpawnFamilies();
   const counts = {};
@@ -179,31 +258,28 @@ function summarizeRuntimeFamilies() {
   }
   let broadCount = 0;
   let generatedMiningCount = 0;
-  const activeInstances = [
-    ...dungeonRuntime.listInstancesByLifecycle("seeded", { full: true }),
-    ...dungeonRuntime.listInstancesByLifecycle("active", { full: true }),
-    ...dungeonRuntime.listInstancesByLifecycle("paused", { full: true }),
-  ];
 
-  for (const instance of activeInstances) {
-    if (
-      !instance ||
-      (instance.runtimeFlags && instance.runtimeFlags.shadowProviderSite === true)
-    ) {
-      continue;
-    }
-    const siteOrigin = normalizeText(instance.siteOrigin, "").toLowerCase();
-    if (siteOrigin === "generatedmining") {
-      generatedMiningCount += 1;
-      continue;
-    }
-    const spawnFamily = normalizeText(
-      instance && instance.metadata && instance.metadata.spawnFamilyKey,
-      normalizeText(instance && instance.spawnState && instance.spawnState.spawnFamilyKey, instance && instance.siteFamily),
-    ).toLowerCase();
-    if (Object.prototype.hasOwnProperty.call(counts, spawnFamily)) {
-      counts[spawnFamily] += 1;
-      broadCount += 1;
+  for (const lifecycle of ACTIVE_RUNTIME_LIFECYCLES) {
+    for (const instance of dungeonRuntime.listInstancesByLifecycle(lifecycle, { full: true })) {
+      if (
+        !instance ||
+        (instance.runtimeFlags && instance.runtimeFlags.shadowProviderSite === true)
+      ) {
+        continue;
+      }
+      const siteOrigin = normalizeText(instance.siteOrigin, "").toLowerCase();
+      if (siteOrigin === "generatedmining") {
+        generatedMiningCount += 1;
+        continue;
+      }
+      const spawnFamily = normalizeText(
+        instance && instance.metadata && instance.metadata.spawnFamilyKey,
+        normalizeText(instance && instance.spawnState && instance.spawnState.spawnFamilyKey, instance && instance.siteFamily),
+      ).toLowerCase();
+      if (Object.prototype.hasOwnProperty.call(counts, spawnFamily)) {
+        counts[spawnFamily] += 1;
+        broadCount += 1;
+      }
     }
   }
 
@@ -323,6 +399,8 @@ async function runSeed(nowMs) {
 
   const systemIDs = dungeonUniverseRuntime._testing.normalizeSystemIDs();
   const batchSize = Math.max(16, toInt(options.batchSize, 192));
+  const systemBatches = buildSystemBatches(systemIDs, batchSize);
+  const systemBatchIndexByID = buildSystemBatchIndex(systemBatches);
   const families = dungeonAuthority.listUniverseSpawnFamilies();
   const startedAtMs = Date.now();
   const shadowCleanup = dungeonRuntime.purgeShadowProviderInstances({
@@ -351,17 +429,20 @@ async function runSeed(nowMs) {
   });
 
   const miningDefinitions = [];
+  const allDefinitions = [];
   emitEvent("phase", buildProgressPayload("build_mining", 0, systemIDs.length, {
     label: "Building generated mining definitions",
   }));
   printLine("Phase 1/4: building generated mining definitions...");
-  for (let offset = 0; offset < systemIDs.length; offset += batchSize) {
-    const batchSystemIDs = systemIDs.slice(offset, offset + batchSize);
+  let miningSystemsProcessed = 0;
+  for (const batchSystemIDs of systemBatches) {
     const batchDefinitions = dungeonUniverseRuntime.listDesiredGeneratedMiningDefinitions(batchSystemIDs, nowMs);
     miningDefinitions.push(...batchDefinitions);
+    allDefinitions.push(...batchDefinitions);
+    miningSystemsProcessed += batchSystemIDs.length;
     emitEvent("phase", buildProgressPayload(
       "build_mining",
-      Math.min(systemIDs.length, offset + batchSystemIDs.length),
+      miningSystemsProcessed,
       systemIDs.length,
       {
         label: "Building generated mining definitions",
@@ -371,50 +452,52 @@ async function runSeed(nowMs) {
   }
   printLine(`Generated mining definitions built: ${miningDefinitions.length}`);
 
-  const broadDefinitions = [];
+  let broadDefinitionCount = 0;
   const familySummaries = {};
-  const broadBatchCount = Math.max(1, Math.ceil(systemIDs.length / batchSize));
-  const broadTotalWorkUnits = Math.max(1, families.length * broadBatchCount);
+  const broadTotalWorkUnits = Math.max(1, families.length);
+  const familyWorkItems = families.map((family) => ({
+    family,
+    queryOptions: { families: [family] },
+  }));
   printLine("Phase 2/4: building persistent broad-family site definitions...");
   emitEvent("phase", buildProgressPayload("build_broad", 0, broadTotalWorkUnits, {
     label: "Building persistent universe site definitions",
-    sitesBuilt: broadDefinitions.length,
+    sitesBuilt: broadDefinitionCount,
   }));
 
-  families.forEach((family, familyIndex) => {
-    let familyDefinitionCount = 0;
-    let familySystemsProcessed = 0;
-    for (let offset = 0; offset < systemIDs.length; offset += batchSize) {
-      const batchSystemIDs = systemIDs.slice(offset, offset + batchSize);
-      const batchResult = dungeonUniverseRuntime.listDesiredUniverseDungeonSiteDefinitions(
-        batchSystemIDs,
-        nowMs,
-        { families: [family] },
-      );
-      broadDefinitions.push(...batchResult.definitions);
-      familyDefinitionCount += batchResult.definitions.length;
-      familySystemsProcessed += batchSystemIDs.length;
-      mergeFamilySummaries(familySummaries, batchResult.families);
-      const completedWorkUnits = (familyIndex * broadBatchCount) + Math.ceil(familySystemsProcessed / batchSize);
-      emitEvent("phase", buildProgressPayload(
-        "build_broad",
-        completedWorkUnits,
-        broadTotalWorkUnits,
-        {
-          label:
-            `Building ${family} family definitions ` +
-            `(${familySystemsProcessed}/${systemIDs.length} systems)`,
-          family,
-          familySiteCount: familyDefinitionCount,
-          sitesBuilt: broadDefinitions.length,
-        },
+  familyWorkItems.forEach(({ family, queryOptions }, familyIndex) => {
+    const familyResult = dungeonUniverseRuntime.listDesiredUniverseDungeonSiteDefinitions(
+      systemIDs,
+      nowMs,
+      queryOptions,
+    );
+    const familyDefinitions = (Array.isArray(familyResult.definitions)
+      ? familyResult.definitions
+      : [])
+      .sort((left, right) => compareBroadDefinitionOrder(
+        left,
+        right,
+        systemBatchIndexByID,
       ));
-    }
+    allDefinitions.push(...familyDefinitions);
+    const familyDefinitionCount = familyDefinitions.length;
+    broadDefinitionCount += familyDefinitionCount;
+    mergeFamilySummaries(familySummaries, familyResult.families);
+    emitEvent("phase", buildProgressPayload(
+      "build_broad",
+      familyIndex + 1,
+      broadTotalWorkUnits,
+      {
+        label: `Building ${family} family definitions`,
+        family,
+        familySiteCount: familyDefinitionCount,
+        sitesBuilt: broadDefinitionCount,
+      },
+    ));
     printLine(`  ${family}: ${familyDefinitionCount} desired sites`);
   });
 
-  const allDefinitions = [...miningDefinitions, ...broadDefinitions];
-  printLine(`Broad persistent definitions built: ${broadDefinitions.length}`);
+  printLine(`Broad persistent definitions built: ${broadDefinitionCount}`);
   printLine(`Total desired universe sites: ${allDefinitions.length}`);
 
   printLine("Phase 3/4: applying dungeon runtime instances...");
@@ -426,6 +509,7 @@ async function runSeed(nowMs) {
   const instanceSummary = dungeonRuntime.reconcileUniverseSeededInstances(allDefinitions, {
     systemIDs,
     nowMs,
+    skipNoopReconcileWrite: status.fullUpToDate === true,
     onProgress(progress) {
       applyInstanceProgressTotal = Math.max(
         applyInstanceProgressTotal,
@@ -502,6 +586,8 @@ async function runSeed(nowMs) {
     lastScope: "full",
     lastReason: "manual-seeder",
     summary,
+  }, {
+    flushDelayMs: 1,
   });
 
   printLine(
