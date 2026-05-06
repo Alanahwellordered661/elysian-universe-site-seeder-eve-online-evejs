@@ -50,11 +50,11 @@ function Copy-AllowlistedFile {
 
 function Ensure-ReleaseBinary {
     $exe = Join-Path $script:Root "bin\UniverseSiteSeeder.exe"
-    if (Test-Path -LiteralPath $exe -PathType Leaf) {
-        return
-    }
-
     if ($SkipBuild) {
+        if (Test-Path -LiteralPath $exe -PathType Leaf) {
+            return
+        }
+
         throw "Release binary is missing from bin. Run Install.bat or rerun this script without -SkipBuild."
     }
 

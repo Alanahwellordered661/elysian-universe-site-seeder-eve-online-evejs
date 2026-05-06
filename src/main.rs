@@ -9,8 +9,8 @@ use anyhow::{Context, Result, anyhow};
 use crossbeam_channel::{Receiver, Sender, unbounded};
 use eframe::egui;
 use egui::{
-    Align, Align2, Color32, CornerRadius, FontId, Frame, Layout, Margin, Pos2, Rect, RichText,
-    Sense, Stroke, StrokeKind, Vec2,
+    Align2, Color32, CornerRadius, FontId, Frame, Margin, Pos2, Rect, RichText, Sense, Stroke,
+    StrokeKind, Vec2,
 };
 use serde::Deserialize;
 use serde_json::Value;
@@ -557,66 +557,73 @@ impl UniverseSeederApp {
         let (badge_label, badge_fill, badge_text) = self.status_badge();
         let time = ui.input(|input| input.time);
         let available = ui.available_width();
-        let hero_height = 198.0;
+        let hero_height = 224.0;
         let (rect, _) = ui.allocate_exact_size(Vec2::new(available, hero_height), Sense::hover());
         paint_clean_hero(ui, rect, time, self.running);
-        ui.scope_builder(
-            egui::UiBuilder::new().max_rect(rect.shrink2(Vec2::new(26.0, 22.0))),
-            |ui| {
-                ui.horizontal(|ui| {
-                    ui.vertical(|ui| {
-                        ui.label(
-                            RichText::new("JOHN ELYSIAN PRESENTS")
-                                .size(12.0)
-                                .strong()
-                                .color(CYAN),
-                        );
-                        ui.add_space(10.0);
-                        ui.label(
-                            RichText::new("Elysian Universe Site Seeder")
-                                .size(35.0)
-                                .strong()
-                                .color(TEXT),
-                        )
-                        .on_hover_text("Designed by John Elysian.");
-                        ui.add_space(8.0);
-                        ui.label(
-                            RichText::new(
-                                "A guided setup assistant for EVE JS persistent universe site state.",
-                            )
-                            .size(16.0)
-                            .color(MUTED),
-                        );
-                        ui.add_space(16.0);
-                        ui.horizontal(|ui| {
-                            small_pill(ui, "Designed by John Elysian", CYAN);
-                            small_pill(ui, "One clear next step", GREEN);
-                            small_pill(ui, "Local data", AMBER);
-                        });
-                        ui.add_space(18.0);
-                        ui.label(
-                            RichText::new("Claims are easy. Shipping universes is harder.")
-                                .size(13.0)
-                                .italics()
-                                .color(MUTED),
-                        );
-                    });
-                    ui.with_layout(Layout::right_to_left(Align::Center), |ui| {
-                        let right_width = 286.0;
-                        let (status_rect, _) =
-                            ui.allocate_exact_size(Vec2::new(right_width, 134.0), Sense::hover());
-                        paint_status_card(
-                            ui,
-                            status_rect,
-                            time,
-                            badge_label,
-                            badge_fill,
-                            badge_text,
-                        );
-                    });
-                });
-            },
+        let inner = rect.shrink2(Vec2::new(26.0, 24.0));
+        let status_width = 286.0;
+        let status_height = 134.0;
+        let status_rect = Rect::from_min_size(
+            Pos2::new(
+                inner.right() - status_width,
+                inner.center().y - status_height / 2.0,
+            ),
+            Vec2::new(status_width, status_height),
         );
+        let left_rect = Rect::from_min_max(
+            inner.left_top(),
+            Pos2::new(status_rect.left() - 28.0, inner.bottom()),
+        );
+
+        ui.scope_builder(egui::UiBuilder::new().max_rect(left_rect), |ui| {
+            ui.set_width(left_rect.width());
+            ui.label(
+                RichText::new("JOHN ELYSIAN PRESENTS")
+                    .size(12.0)
+                    .strong()
+                    .color(CYAN),
+            );
+            ui.add_space(9.0);
+            ui.add(
+                egui::Label::new(
+                    RichText::new("Elysian Universe Site Seeder")
+                        .size(35.0)
+                        .strong()
+                        .color(TEXT),
+                )
+                .wrap(),
+            )
+            .on_hover_text("Designed by John Elysian.");
+            ui.add_space(7.0);
+            ui.add(
+                egui::Label::new(
+                    RichText::new(
+                        "A guided setup assistant for EVE JS persistent universe site state.",
+                    )
+                    .size(16.0)
+                    .color(MUTED),
+                )
+                .wrap(),
+            );
+            ui.add_space(14.0);
+            ui.horizontal_wrapped(|ui| {
+                small_pill(ui, "Designed by John Elysian", CYAN);
+                small_pill(ui, "One clear next step", GREEN);
+                small_pill(ui, "Local data", AMBER);
+            });
+            ui.add_space(12.0);
+            ui.add(
+                egui::Label::new(
+                    RichText::new("Claims are easy. Shipping universes is harder.")
+                        .size(13.0)
+                        .italics()
+                        .color(MUTED),
+                )
+                .wrap(),
+            );
+        });
+        paint_status_card(ui, status_rect, time, badge_label, badge_fill, badge_text);
+        ui.advance_cursor_after_rect(rect);
     }
 
     fn draw_guided_focus(&mut self, ui: &mut egui::Ui) {
@@ -1623,6 +1630,7 @@ fn setup_focus(
             assistant_loader(ui, accent, time);
         }
     });
+    ui.advance_cursor_after_rect(rect);
     cta_response
 }
 
