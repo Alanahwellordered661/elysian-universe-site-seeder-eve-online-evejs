@@ -72,5 +72,12 @@
     <text x="1106" y="548" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="19">combat, data, relic, ore, gas, drifter</text>
   </g>
   <path d="M120 628H1408" stroke="#2c4669" stroke-width="2"/>
-  <text x="120" y="666" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Measured from the current EVE JS universe state: 347.56MB dungeon runtime state, 64.26MB authority graph, 97.02MB sharded mining site state.</text>
+  <text x="120" y="656" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="20" font-weight="800" letter-spacing="0.5">MEASURED FROM THE CURRENT EVE JS UNIVERSE STATE</text>
+  <text x="120" y="682" font-family="JetBrains Mono, Consolas, monospace" font-size="20" font-weight="800">
+    <tspan fill="#7ce7ff">347.56MB</tspan><tspan fill="#c5d1df"> dungeon runtime state</tspan>
+    <tspan fill="#355b84">  /  </tspan>
+    <tspan fill="#ffd27a">64.26MB</tspan><tspan fill="#c5d1df"> authority graph</tspan>
+    <tspan fill="#355b84">  /  </tspan>
+    <tspan fill="#ff7aad">97.02MB</tspan><tspan fill="#c5d1df"> sharded mining site state</tspan>
+  </text>
 </svg>
