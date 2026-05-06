@@ -9,6 +9,7 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/JohnElysian/elysian-universe-site-seeder-eve-online-evejs/actions/workflows/ci.yml"><img alt="Build" src="https://img.shields.io/github/actions/workflow/status/JohnElysian/elysian-universe-site-seeder-eve-online-evejs/ci.yml?branch=main&label=build"></a>
   <a href="https://github.com/JohnElysian/elysian-universe-site-seeder-eve-online-evejs/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/JohnElysian/elysian-universe-site-seeder-eve-online-evejs?label=release"></a>
   <img alt="License" src="https://img.shields.io/badge/license-AGPL--3.0--or--later-2af6ff">
   <img alt="Platforms" src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-ff7aad">
