@@ -165,10 +165,28 @@ resolve_evejs_root() {
   printf '%s\n' "$candidate"
 }
 
+binary_is_current() {
+  [ -x "$EXE" ] || return 1
+  [ -f "$ROOT/Cargo.toml" ] || return 0
+
+  local input
+  for input in Cargo.toml Cargo.lock src/main.rs seed_universe_sites.js data/spec/dungeonSpawnProfiles.json; do
+    if [ -f "$ROOT/$input" ] && [ "$ROOT/$input" -nt "$EXE" ]; then
+      return 1
+    fi
+  done
+
+  return 0
+}
+
 ensure_binary() {
-  if [ -x "$EXE" ]; then
+  if binary_is_current; then
     printf '  Binary already exists: %s\n' "$EXE"
     return
+  fi
+
+  if [ -x "$EXE" ]; then
+    say "Refreshing the seeder binary because the bundled engine changed"
   fi
 
   [ "$SKIP_BUILD" -eq 0 ] || die "Binary is missing and --skip-build was used."

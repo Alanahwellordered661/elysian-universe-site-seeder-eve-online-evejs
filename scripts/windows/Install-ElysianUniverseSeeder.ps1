@@ -268,10 +268,43 @@ function Resolve-EveJsRoot {
     return $candidate
 }
 
+function Test-BinaryCurrent {
+    if (-not (Test-Path -LiteralPath $script:Exe -PathType Leaf)) {
+        return $false
+    }
+
+    $cargoToml = Join-Path $script:Root "Cargo.toml"
+    if (-not (Test-Path -LiteralPath $cargoToml -PathType Leaf)) {
+        return $true
+    }
+
+    $exeWriteTime = (Get-Item -LiteralPath $script:Exe).LastWriteTimeUtc
+    $inputs = @(
+        "Cargo.toml",
+        "Cargo.lock",
+        "src\main.rs",
+        "seed_universe_sites.js",
+        "data\spec\dungeonSpawnProfiles.json"
+    )
+
+    foreach ($relative in $inputs) {
+        $path = Join-Path $script:Root $relative
+        if ((Test-Path -LiteralPath $path -PathType Leaf) -and (Get-Item -LiteralPath $path).LastWriteTimeUtc -gt $exeWriteTime) {
+            return $false
+        }
+    }
+
+    return $true
+}
+
 function Ensure-Binary {
-    if (Test-Path -LiteralPath $script:Exe -PathType Leaf) {
+    if (Test-BinaryCurrent) {
         Write-Host ("  Binary already exists: {0}" -f $script:Exe)
         return
+    }
+
+    if (Test-Path -LiteralPath $script:Exe -PathType Leaf) {
+        Write-Step "Refreshing the seeder binary because the bundled engine changed"
     }
 
     if ($SkipBuild) {
