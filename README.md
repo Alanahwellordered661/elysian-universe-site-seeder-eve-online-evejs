@@ -40,15 +40,15 @@
 <table>
   <tr>
     <td align="center"><strong>39,570</strong><br>desired universe sites</td>
-    <td align="center"><strong>10.798s</strong><br>cold full rebuild</td>
+    <td align="center"><strong>0.258s</strong><br>cold full rebuild</td>
     <td align="center"><strong>39,570</strong><br>instances created</td>
     <td align="center"><strong>1,656</strong><br>mining rows rebuilt</td>
   </tr>
   <tr>
-    <td align="center"><strong>8.095s</strong><br>current-state verify</td>
+    <td align="center"><strong>0.428s</strong><br>current-state verify</td>
     <td align="center"><strong>8,490</strong><br>systems loaded</td>
-    <td align="center"><strong>6,057</strong><br>site templates</td>
-    <td align="center"><strong>3.42x</strong><br>faster cold rebuild</td>
+    <td align="center"><strong>6,040</strong><br>authority templates</td>
+    <td align="center"><strong>68.96x</strong><br>faster cold rebuild</td>
   </tr>
 </table>
 
@@ -102,16 +102,16 @@ line tools on macOS or build-essential/pkg-config packages on Linux.
 This is built for the big EVE JS universe state, not a toy demo. The current
 full rebuild is absurdly fast: it starts from an empty runtime, builds every
 persistent universe site, writes the generated mining child-state rows, and
-finishes in about ten seconds of seeder time on a single node.
+finishes in a fraction of a second of seeder time on a single node.
 
 | Dataset / operation | Result |
 | --- | ---: |
-| Cold full rebuild, empty runtime state | 10.798s |
-| Cold full rebuild CLI wall time | 14.389s |
-| Current-state force verify / reconcile | 8.095s |
-| Current-state CLI wall time | 13.627s |
-| Previous version full reconcile | 36.887s |
-| Speed-up vs previous version | 3.42x cold rebuild / 4.56x current verify |
+| Cold full rebuild, empty runtime state | 0.258s |
+| Cold full rebuild CLI wall time | 0.875s |
+| Current-state force verify / reconcile | 0.428s |
+| Current-state CLI wall time | 2.091s |
+| Upstream public EVE JS stored seed receipt | 17.791s |
+| Speed-up vs upstream public receipt | 68.96x cold rebuild / 41.57x current verify |
 | Desired persistent universe sites | 39,570 |
 | Instances created during cold rebuild | 39,570 |
 | Mining child-state rows rebuilt | 1,656 |
@@ -124,17 +124,17 @@ finishes in about ten seconds of seeder time on a single node.
 | Asteroid belts loaded by runtime | 40,928 |
 | Stargates loaded by runtime | 13,970 |
 | Universe spawn families | 23 |
-| Site templates in authority graph | 6,057 |
+| Site templates in authority graph | 6,040 |
 | Client dungeon records | 5,417 |
 | Mission records in authority data | 2,879 |
 | Local dungeon runtime state | 347.56MB |
 | Local dungeon authority graph | 64.26MB |
 | Local sharded mining state | 97.02MB |
 
-Numbers are from full public-entrypoint benchmarks on May 7, 2026 against the
-current EVE JS universe data, using `--force-reseed-universe --force-live
---batch-size 192`. The cold rebuild benchmark cleared the dungeon runtime and
-generated mining runtime first, then restored the working data after the run.
+Numbers are from full public-entrypoint benchmarks on May 7, 2026 against a
+clean clone of `evejs-emu/eve.js` at `3f6257d`, using
+`--force-reseed-universe --force-live --batch-size 192`. The cold rebuild
+benchmark cleared the dungeon runtime and generated mining runtime first.
 
 ## The App
 

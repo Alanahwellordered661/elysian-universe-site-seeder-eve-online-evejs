@@ -57,7 +57,7 @@
   </g>
   <g>
     <rect x="462" y="338" width="315" height="146" rx="18" fill="#302414" stroke="#ffd27a" stroke-width="2"/>
-    <text x="488" y="400" fill="#ffd27a" font-family="JetBrains Mono, Consolas, monospace" font-size="47" font-weight="900">10.798s</text>
+    <text x="488" y="400" fill="#ffd27a" font-family="JetBrains Mono, Consolas, monospace" font-size="47" font-weight="900">0.258s</text>
     <text x="490" y="437" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="24" font-weight="900">cold full rebuild</text>
     <text x="490" y="466" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18">empty runtime state</text>
   </g>
@@ -69,7 +69,7 @@
   </g>
   <g>
     <rect x="1150" y="338" width="314" height="146" rx="18" fill="#102437" stroke="#7ce7ff" stroke-width="2"/>
-    <text x="1176" y="400" fill="#7ce7ff" font-family="JetBrains Mono, Consolas, monospace" font-size="47" font-weight="900">8.095s</text>
+    <text x="1176" y="400" fill="#7ce7ff" font-family="JetBrains Mono, Consolas, monospace" font-size="47" font-weight="900">0.428s</text>
     <text x="1178" y="437" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="24" font-weight="900">current verify</text>
     <text x="1178" y="466" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18">forced full reconcile</text>
   </g>
@@ -86,12 +86,12 @@
   </g>
   <g>
     <rect x="806" y="542" width="315" height="86" rx="16" fill="#261122" stroke="#ff7aad" stroke-width="1.5" opacity="0.96"/>
-    <text x="830" y="577" fill="#ff7aad" font-family="JetBrains Mono, Consolas, monospace" font-size="25" font-weight="900">6,057</text>
-    <text x="830" y="605" fill="#d8e8f7" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18" font-weight="800">site templates</text>
+    <text x="830" y="577" fill="#ff7aad" font-family="JetBrains Mono, Consolas, monospace" font-size="25" font-weight="900">6,040</text>
+    <text x="830" y="605" fill="#d8e8f7" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18" font-weight="800">authority templates</text>
   </g>
   <g>
     <rect x="1150" y="542" width="314" height="86" rx="16" fill="#0c1c2e" stroke="#7ce7ff" stroke-width="1.5" opacity="0.96"/>
-    <text x="1174" y="577" fill="#7ce7ff" font-family="JetBrains Mono, Consolas, monospace" font-size="25" font-weight="900">3.42x</text>
-    <text x="1174" y="605" fill="#d8e8f7" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18" font-weight="800">faster than previous version</text>
+    <text x="1174" y="577" fill="#7ce7ff" font-family="JetBrains Mono, Consolas, monospace" font-size="25" font-weight="900">68.96x</text>
+    <text x="1174" y="605" fill="#d8e8f7" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18" font-weight="800">vs public EVE JS</text>
   </g>
 </svg>
