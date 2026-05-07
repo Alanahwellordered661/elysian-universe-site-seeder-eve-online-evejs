@@ -1,0 +1,125 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Universe-scale site seeding benchmark</title>
+  <desc id="desc">Large benchmark card showing a 10.798 second cold full EVE JS universe site rebuild and 8.095 second current-state verify.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#050914"/>
+      <stop offset="44%" stop-color="#0d1725"/>
+      <stop offset="100%" stop-color="#170817"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2af6ff"/>
+      <stop offset="100%" stop-color="#51ffd0"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffd27a"/>
+      <stop offset="100%" stop-color="#f9a84f"/>
+    </linearGradient>
+    <linearGradient id="rose" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff7aad"/>
+      <stop offset="100%" stop-color="#ff4f96"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="16" result="blur"/>
+      <feBlend in="SourceGraphic" in2="blur"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="900" rx="30" fill="url(#bg)"/>
+  <g opacity="0.42" filter="url(#glow)">
+    <path d="M-80 506C226 364 412 450 690 296C986 132 1162 188 1680 82" stroke="#2af6ff" stroke-width="3"/>
+    <path d="M-72 676C218 578 448 626 736 424C1018 226 1202 316 1690 182" stroke="#ff7aad" stroke-width="3"/>
+    <path d="M-40 348C246 302 492 320 746 218C1012 108 1210 114 1664 54" stroke="#ffd27a" stroke-width="2"/>
+  </g>
+
+  <rect x="70" y="64" width="1460" height="772" rx="28" fill="#0c1320" fill-opacity="0.94" stroke="#2c4669" stroke-width="2"/>
+  <text x="120" y="128" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="58" font-weight="900">ABSURD Full-Universe Site Rebuild</text>
+  <text x="120" y="170" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="25" font-weight="700">single node, empty runtime, current EVE JS universe state</text>
+
+  <g>
+    <rect x="120" y="214" width="408" height="178" rx="18" fill="#0b2935" stroke="#2af6ff" stroke-width="2"/>
+    <text x="154" y="287" fill="#2af6ff" font-family="JetBrains Mono, Consolas, monospace" font-size="58" font-weight="900">10.798s</text>
+    <text x="156" y="329" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="27" font-weight="900">cold full rebuild</text>
+    <text x="156" y="362" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="21">from cleared runtime state</text>
+  </g>
+  <g>
+    <rect x="596" y="214" width="408" height="178" rx="18" fill="#302414" stroke="#ffd27a" stroke-width="2"/>
+    <text x="630" y="287" fill="#ffd27a" font-family="JetBrains Mono, Consolas, monospace" font-size="58" font-weight="900">39,570</text>
+    <text x="632" y="329" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="27" font-weight="900">instances created</text>
+    <text x="632" y="362" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="21">full persistent site state</text>
+  </g>
+  <g>
+    <rect x="1072" y="214" width="336" height="178" rx="18" fill="#331426" stroke="#ff7aad" stroke-width="2"/>
+    <text x="1106" y="287" fill="#ff7aad" font-family="JetBrains Mono, Consolas, monospace" font-size="58" font-weight="900">8.095s</text>
+    <text x="1108" y="329" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="27" font-weight="900">verify pass</text>
+    <text x="1108" y="362" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="21">forced full reconcile</text>
+  </g>
+
+  <g>
+    <rect x="120" y="438" width="284" height="150" rx="18" fill="#101d2e" stroke="#355b84" stroke-width="2"/>
+    <text x="150" y="498" fill="#7ce7ff" font-family="JetBrains Mono, Consolas, monospace" font-size="42" font-weight="900">39,570</text>
+    <text x="152" y="540" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="23" font-weight="900">desired sites</text>
+    <text x="152" y="568" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18">complete target set</text>
+  </g>
+  <g>
+    <rect x="438" y="438" width="284" height="150" rx="18" fill="#101d2e" stroke="#355b84" stroke-width="2"/>
+    <text x="468" y="498" fill="#ffd27a" font-family="JetBrains Mono, Consolas, monospace" font-size="42" font-weight="900">39,432</text>
+    <text x="470" y="540" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="23" font-weight="900">broad definitions</text>
+    <text x="470" y="568" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18">anomalies + signatures</text>
+  </g>
+  <g>
+    <rect x="756" y="438" width="284" height="150" rx="18" fill="#101d2e" stroke="#355b84" stroke-width="2"/>
+    <text x="786" y="498" fill="#ff7aad" font-family="JetBrains Mono, Consolas, monospace" font-size="42" font-weight="900">1,656</text>
+    <text x="788" y="540" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="23" font-weight="900">mining rows</text>
+    <text x="788" y="568" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18">rebuilt child state</text>
+  </g>
+  <g>
+    <rect x="1074" y="438" width="334" height="150" rx="18" fill="#101d2e" stroke="#355b84" stroke-width="2"/>
+    <text x="1104" y="498" fill="#51ffd0" font-family="JetBrains Mono, Consolas, monospace" font-size="42" font-weight="900">3.42x</text>
+    <text x="1106" y="540" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="23" font-weight="900">faster cold rebuild</text>
+    <text x="1106" y="568" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18">than previous version</text>
+  </g>
+
+  <g>
+    <rect x="120" y="628" width="246" height="76" rx="14" fill="#071827" stroke="#2af6ff" stroke-width="1.5"/>
+    <text x="144" y="660" fill="#2af6ff" font-family="JetBrains Mono, Consolas, monospace" font-size="24" font-weight="900">8,490</text>
+    <text x="144" y="686" fill="#d8e8f7" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="17" font-weight="800">systems loaded</text>
+  </g>
+  <g>
+    <rect x="396" y="628" width="246" height="76" rx="14" fill="#241b10" stroke="#ffd27a" stroke-width="1.5"/>
+    <text x="420" y="660" fill="#ffd27a" font-family="JetBrains Mono, Consolas, monospace" font-size="24" font-weight="900">6,057</text>
+    <text x="420" y="686" fill="#d8e8f7" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="17" font-weight="800">site templates</text>
+  </g>
+  <g>
+    <rect x="672" y="628" width="246" height="76" rx="14" fill="#261122" stroke="#ff7aad" stroke-width="1.5"/>
+    <text x="696" y="660" fill="#ff7aad" font-family="JetBrains Mono, Consolas, monospace" font-size="24" font-weight="900">5,417</text>
+    <text x="696" y="686" fill="#d8e8f7" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="17" font-weight="800">client dungeons</text>
+  </g>
+  <g>
+    <rect x="948" y="628" width="246" height="76" rx="14" fill="#0c1c2e" stroke="#7ce7ff" stroke-width="1.5"/>
+    <text x="972" y="660" fill="#7ce7ff" font-family="JetBrains Mono, Consolas, monospace" font-size="24" font-weight="900">121,242</text>
+    <text x="972" y="686" fill="#d8e8f7" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="17" font-weight="800">celestials loaded</text>
+  </g>
+  <g>
+    <rect x="1224" y="628" width="184" height="76" rx="14" fill="#102437" stroke="#51ffd0" stroke-width="1.5"/>
+    <text x="1248" y="660" fill="#51ffd0" font-family="JetBrains Mono, Consolas, monospace" font-size="24" font-weight="900">23</text>
+    <text x="1248" y="686" fill="#d8e8f7" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="17" font-weight="800">families</text>
+  </g>
+
+  <path d="M120 742H1408" stroke="#2c4669" stroke-width="2"/>
+  <text x="120" y="772" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="20" font-weight="900">MEASURED MAY 7, 2026 - PUBLIC ENTRYPOINT - CURRENT EVE JS UNIVERSE DATA</text>
+  <text x="120" y="802" font-family="JetBrains Mono, Consolas, monospace" font-size="18" font-weight="800">
+    <tspan fill="#7ce7ff">14.389s</tspan><tspan fill="#c5d1df"> cold CLI wall</tspan>
+    <tspan fill="#355b84"> / </tspan>
+    <tspan fill="#ffd27a">13.627s</tspan><tspan fill="#c5d1df"> current CLI wall</tspan>
+    <tspan fill="#355b84"> / </tspan>
+    <tspan fill="#ff7aad">4.56x</tspan><tspan fill="#c5d1df"> current verify vs previous version</tspan>
+  </text>
+  <text x="120" y="830" font-family="JetBrains Mono, Consolas, monospace" font-size="18" font-weight="800">
+    <tspan fill="#7ce7ff">347.56MB</tspan><tspan fill="#c5d1df"> runtime state</tspan>
+    <tspan fill="#355b84"> / </tspan>
+    <tspan fill="#ffd27a">64.26MB</tspan><tspan fill="#c5d1df"> authority graph</tspan>
+    <tspan fill="#355b84"> / </tspan>
+    <tspan fill="#ff7aad">97.02MB</tspan><tspan fill="#c5d1df"> sharded mining state</tspan>
+  </text>
+</svg>

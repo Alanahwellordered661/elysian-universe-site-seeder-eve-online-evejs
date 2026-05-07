@@ -1,0 +1,97 @@
+<svg width="1600" height="760" viewBox="0 0 1600 760" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc" style="background:#050914">
+  <title id="title">Elysian Universe Site Seeder hero</title>
+  <desc id="desc">Cinematic EVE Online universe site seeder banner showing cold full rebuild speed for EVE JS.</desc>
+  <defs>
+    <radialGradient id="core" cx="54%" cy="34%" r="78%">
+      <stop offset="0%" stop-color="#173f58"/>
+      <stop offset="48%" stop-color="#0d1725"/>
+      <stop offset="100%" stop-color="#050914"/>
+    </radialGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0c1524" stop-opacity="0.97"/>
+      <stop offset="100%" stop-color="#111624" stop-opacity="0.93"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2af6ff"/>
+      <stop offset="100%" stop-color="#51ffd0"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffd27a"/>
+      <stop offset="100%" stop-color="#f9a84f"/>
+    </linearGradient>
+    <linearGradient id="rose" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff7aad"/>
+      <stop offset="100%" stop-color="#ff4f96"/>
+    </linearGradient>
+    <filter id="glow" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="14" result="blur"/>
+      <feBlend in="SourceGraphic" in2="blur"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="760" rx="30" fill="url(#core)"/>
+  <g opacity="0.5" filter="url(#glow)">
+    <path d="M-72 462C198 330 386 398 642 262C934 108 1122 144 1690 90" stroke="#2af6ff" stroke-width="3"/>
+    <path d="M-68 566C216 452 420 530 696 358C982 178 1194 268 1686 168" stroke="#ff7aad" stroke-width="3"/>
+    <path d="M-44 332C246 278 432 318 686 214C948 106 1164 92 1664 42" stroke="#ffd27a" stroke-width="2"/>
+  </g>
+  <g opacity="0.13">
+    <circle cx="1182" cy="112" r="250" fill="#2af6ff"/>
+    <circle cx="1278" cy="126" r="188" fill="#ff7aad"/>
+    <circle cx="1228" cy="172" r="354" fill="#ffffff"/>
+  </g>
+
+  <rect x="70" y="64" width="1460" height="632" rx="28" fill="url(#panel)" stroke="#2c4669" stroke-width="2"/>
+  <text x="118" y="124" fill="#2af6ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="22" font-weight="900">JOHN ELYSIAN PRESENTS</text>
+  <text x="116" y="204" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="72" font-weight="900">Elysian Universe Site Seeder</text>
+  <text x="120" y="256" fill="#b8c6d8" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="27" font-weight="600">
+    <tspan x="120" y="256">EVE Online anomalies, exploration signatures, mining sites, missions, and persistent</tspan>
+    <tspan x="120" y="292">dungeon state for EVE JS. Fresh universe rebuilds, finished before the coffee blinks.</tspan>
+  </text>
+
+  <g>
+    <rect x="118" y="338" width="315" height="146" rx="18" fill="#0b2935" stroke="#2af6ff" stroke-width="2"/>
+    <text x="144" y="400" fill="#2af6ff" font-family="JetBrains Mono, Consolas, monospace" font-size="47" font-weight="900">39,570</text>
+    <text x="146" y="437" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="24" font-weight="900">universe sites</text>
+    <text x="146" y="466" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18">full target set</text>
+  </g>
+  <g>
+    <rect x="462" y="338" width="315" height="146" rx="18" fill="#302414" stroke="#ffd27a" stroke-width="2"/>
+    <text x="488" y="400" fill="#ffd27a" font-family="JetBrains Mono, Consolas, monospace" font-size="47" font-weight="900">10.798s</text>
+    <text x="490" y="437" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="24" font-weight="900">cold full rebuild</text>
+    <text x="490" y="466" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18">empty runtime state</text>
+  </g>
+  <g>
+    <rect x="806" y="338" width="315" height="146" rx="18" fill="#331426" stroke="#ff7aad" stroke-width="2"/>
+    <text x="832" y="400" fill="#ff7aad" font-family="JetBrains Mono, Consolas, monospace" font-size="47" font-weight="900">39,570</text>
+    <text x="834" y="437" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="24" font-weight="900">instances created</text>
+    <text x="834" y="466" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18">fresh persistent universe</text>
+  </g>
+  <g>
+    <rect x="1150" y="338" width="314" height="146" rx="18" fill="#102437" stroke="#7ce7ff" stroke-width="2"/>
+    <text x="1176" y="400" fill="#7ce7ff" font-family="JetBrains Mono, Consolas, monospace" font-size="47" font-weight="900">8.095s</text>
+    <text x="1178" y="437" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="24" font-weight="900">current verify</text>
+    <text x="1178" y="466" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18">forced full reconcile</text>
+  </g>
+
+  <g>
+    <rect x="118" y="542" width="315" height="86" rx="16" fill="#071827" stroke="#2af6ff" stroke-width="1.5" opacity="0.96"/>
+    <text x="142" y="577" fill="#2af6ff" font-family="JetBrains Mono, Consolas, monospace" font-size="25" font-weight="900">1,656</text>
+    <text x="142" y="605" fill="#d8e8f7" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18" font-weight="800">mining rows rebuilt</text>
+  </g>
+  <g>
+    <rect x="462" y="542" width="315" height="86" rx="16" fill="#241b10" stroke="#ffd27a" stroke-width="1.5" opacity="0.96"/>
+    <text x="486" y="577" fill="#ffd27a" font-family="JetBrains Mono, Consolas, monospace" font-size="25" font-weight="900">8,490</text>
+    <text x="486" y="605" fill="#d8e8f7" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18" font-weight="800">systems loaded</text>
+  </g>
+  <g>
+    <rect x="806" y="542" width="315" height="86" rx="16" fill="#261122" stroke="#ff7aad" stroke-width="1.5" opacity="0.96"/>
+    <text x="830" y="577" fill="#ff7aad" font-family="JetBrains Mono, Consolas, monospace" font-size="25" font-weight="900">6,057</text>
+    <text x="830" y="605" fill="#d8e8f7" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18" font-weight="800">site templates</text>
+  </g>
+  <g>
+    <rect x="1150" y="542" width="314" height="86" rx="16" fill="#0c1c2e" stroke="#7ce7ff" stroke-width="1.5" opacity="0.96"/>
+    <text x="1174" y="577" fill="#7ce7ff" font-family="JetBrains Mono, Consolas, monospace" font-size="25" font-weight="900">3.42x</text>
+    <text x="1174" y="605" fill="#d8e8f7" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18" font-weight="800">faster than previous version</text>
+  </g>
+</svg>

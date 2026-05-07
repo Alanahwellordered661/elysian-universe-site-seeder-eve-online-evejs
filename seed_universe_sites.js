@@ -10,6 +10,19 @@ function toInt(value, fallback = 0) {
   return Number.isFinite(numeric) ? Math.trunc(numeric) : fallback;
 }
 
+function cloneValue(value) {
+  if (value === undefined) {
+    return undefined;
+  }
+  return JSON.parse(JSON.stringify(value));
+}
+
+function normalizeObject(value) {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? value
+    : {};
+}
+
 function normalizeText(value, fallback = "") {
   const normalized = String(value == null ? "" : value).trim();
   return normalized || fallback;
@@ -152,6 +165,23 @@ const miningResourceSiteService = require(path.join(
   repoRoot,
   "server/src/services/mining/miningResourceSiteService",
 ));
+let buildSolarAuthorityFailureForSystems = null;
+try {
+  ({ buildSolarAuthorityFailureForSystems } = require(path.join(
+    repoRoot,
+    "server/src/cluster/solarProcessAuthority",
+  )));
+} catch (error) {
+  buildSolarAuthorityFailureForSystems = null;
+}
+const reconcileUniverseSeededInstances =
+  canUseEmbeddedOfflineReconcile()
+    ? reconcileUniverseSeededInstancesFast
+    : (
+      typeof dungeonRuntime.reconcileUniverseSeededInstancesOffline === "function"
+        ? dungeonRuntime.reconcileUniverseSeededInstancesOffline
+        : dungeonRuntime.reconcileUniverseSeededInstances
+    );
 
 function detectServerActive(port, timeoutMs = 400) {
   return new Promise((resolve) => {
@@ -177,6 +207,656 @@ function detectServerActive(port, timeoutMs = 400) {
     socket.on("error", () => finish(false));
     socket.on("close", () => finish(false));
   });
+}
+
+function canUseEmbeddedOfflineReconcile() {
+  return (
+    typeof dungeonAuthority.getTemplateByID === "function" &&
+    typeof dungeonRuntimeState.loadState === "function" &&
+    typeof dungeonRuntimeState.writeState === "function" &&
+    typeof dungeonRuntimeState.normalizeInstanceRecord === "function" &&
+    typeof dungeonRuntimeState.isActiveLifecycleState === "function"
+  );
+}
+
+function normalizeOwnership(options = {}) {
+  const sharedWithCharacterIDs = [...new Set((Array.isArray(options.sharedWithCharacterIDs)
+    ? options.sharedWithCharacterIDs
+    : [])
+    .map((entry) => toInt(entry, 0))
+    .filter((entry) => entry > 0))].sort((left, right) => left - right);
+  return {
+    visibilityScope: normalizeText(options.visibilityScope, "public").toLowerCase(),
+    characterID: Math.max(0, toInt(options.characterID, 0)) || null,
+    corporationID: Math.max(0, toInt(options.corporationID, 0)) || null,
+    fleetID: Math.max(0, toInt(options.fleetID, 0)) || null,
+    missionOwnerCharacterID: Math.max(0, toInt(options.missionOwnerCharacterID, 0)) || null,
+    sharedWithCharacterIDs,
+    metadata: normalizeObject(options.metadata) ? cloneValue(normalizeObject(options.metadata)) : {},
+  };
+}
+
+function normalizePosition(value) {
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+  if (Array.isArray(value) && value.length >= 3) {
+    return {
+      x: Number(value[0]) || 0,
+      y: Number(value[1]) || 0,
+      z: Number(value[2]) || 0,
+    };
+  }
+  return {
+    x: Number(value.x) || 0,
+    y: Number(value.y) || 0,
+    z: Number(value.z) || 0,
+  };
+}
+
+function normalizeConnections(template) {
+  if (Array.isArray(template && template.connections)) {
+    return template.connections
+      .filter((entry) => entry && typeof entry === "object")
+      .map((entry) => cloneValue(entry));
+  }
+  if (template && template.connections && typeof template.connections === "object") {
+    return Object.entries(template.connections)
+      .filter(([, entry]) => entry && typeof entry === "object")
+      .map(([connectionKey, entry]) => ({
+        connectionKey,
+        ...cloneValue(entry),
+      }));
+  }
+  return [];
+}
+
+function listOrderedTemplateRoomKeys(template) {
+  const roomKeys = ["room:entry"];
+  const environmentTemplates = normalizeObject(template && template.environmentTemplates);
+  const roomTemplates = normalizeObject(environmentTemplates.roomTemplates);
+  const orderedRoomObjectIDs = Object.keys(roomTemplates)
+    .map((entry) => toInt(entry, 0))
+    .filter((entry) => entry > 0)
+    .sort((left, right) => left - right);
+  for (const roomObjectID of orderedRoomObjectIDs) {
+    roomKeys.push(`room:${roomObjectID}`);
+  }
+  return roomKeys;
+}
+
+function buildDefaultRoomStates(template, nowMs, definition = {}) {
+  if (definition.roomStatesByKey && typeof definition.roomStatesByKey === "object") {
+    return cloneValue(definition.roomStatesByKey);
+  }
+
+  const roomStatesByKey = {
+    "room:entry": {
+      roomKey: "room:entry",
+      state: "active",
+      stage: "entry",
+      pocketID: null,
+      nodeGraphID:
+        template &&
+        template.clientObjectives &&
+        Number(template.clientObjectives.nodeGraphID) > 0
+          ? Number(template.clientObjectives.nodeGraphID)
+          : null,
+      activatedAtMs: nowMs,
+      completedAtMs: 0,
+      lastUpdatedAtMs: nowMs,
+      spawnedEntityIDs: [],
+      counters: {},
+      metadata: {
+        seededFromTemplate: true,
+      },
+    },
+  };
+
+  const environmentTemplates = normalizeObject(template && template.environmentTemplates);
+  const roomTemplates = normalizeObject(environmentTemplates.roomTemplates);
+  for (const roomObjectID of Object.keys(roomTemplates)) {
+    const roomKey = `room:${normalizeText(roomObjectID, "")}`;
+    if (roomKey === "room:" || roomStatesByKey[roomKey]) {
+      continue;
+    }
+    roomStatesByKey[roomKey] = {
+      roomKey,
+      state: "pending",
+      stage: "room",
+      pocketID: toInt(roomObjectID, 0) || null,
+      nodeGraphID: null,
+      activatedAtMs: 0,
+      completedAtMs: 0,
+      lastUpdatedAtMs: nowMs,
+      spawnedEntityIDs: [],
+      counters: {},
+      metadata: {
+        seededFromTemplate: true,
+      },
+    };
+  }
+
+  return roomStatesByKey;
+}
+
+function buildDefaultGateStates(template, nowMs, definition = {}) {
+  if (definition.gateStatesByKey && typeof definition.gateStatesByKey === "object") {
+    return cloneValue(definition.gateStatesByKey);
+  }
+
+  const connections = normalizeConnections(template);
+  const orderedRoomKeys = listOrderedTemplateRoomKeys(template);
+  const gateStatesByKey = {};
+  connections.forEach((connection, index) => {
+    const fromObjectID = toInt(connection && connection.fromObjectID, 0);
+    const toObjectID = toInt(connection && connection.toObjectID, 0);
+    const explicitDestinationRoomKey = toObjectID > 0 ? `room:${toObjectID}` : null;
+    const inferredDestinationRoomKey =
+      explicitDestinationRoomKey && orderedRoomKeys.includes(explicitDestinationRoomKey)
+        ? explicitDestinationRoomKey
+        : (
+          orderedRoomKeys.length > 1
+            ? orderedRoomKeys[Math.min(index + 1, orderedRoomKeys.length - 1)]
+            : "room:entry"
+        );
+    const gateKey = `gate:${fromObjectID || (index + 1)}`;
+    const defaultState = inferredDestinationRoomKey === "room:entry" ? "unlocked" : "locked";
+    gateStatesByKey[gateKey] = {
+      gateKey,
+      state: defaultState,
+      usesCount: 0,
+      unlockedAtMs: defaultState === "unlocked" ? nowMs : 0,
+      lastUsedAtMs: 0,
+      destinationRoomKey: inferredDestinationRoomKey || null,
+      allowedShipGroupIDs: [],
+      allowedShipTypeIDs: [],
+      metadata: {
+        seededFromTemplate: true,
+        connectionIndex: index,
+        connectionKey: connection && connection.connectionKey ? connection.connectionKey : null,
+        fromObjectID: fromObjectID || null,
+        toObjectID: toObjectID || null,
+        inferredDestinationRoomKey: inferredDestinationRoomKey || null,
+        allowedShipsList: toInt(connection && connection.allowedShipsList, 0) || null,
+        allowedRaces: Array.isArray(connection && connection.allowedRaces)
+          ? cloneValue(connection.allowedRaces)
+          : [],
+        rawConnection: cloneValue(connection),
+      },
+    };
+  });
+
+  return gateStatesByKey;
+}
+
+function buildDefaultObjectiveState(template, nowMs, definition = {}) {
+  if (definition.objectiveState && typeof definition.objectiveState === "object") {
+    return cloneValue(definition.objectiveState);
+  }
+
+  const clientObjectives = normalizeObject(template && template.clientObjectives);
+  const objectiveMetadata = normalizeObject(template && template.objectiveMetadata);
+  const objectiveChain = normalizeObject(objectiveMetadata.objectiveChain);
+  const seededObjectives = Array.isArray(objectiveChain.objectives)
+    ? objectiveChain.objectives
+    : [];
+  const seededCurrentObjective = seededObjectives.find((objective) => (
+    objective && (objective.startActive === 1 || objective.startActive === true)
+  )) || seededObjectives[0] || null;
+  return {
+    state: Object.keys(clientObjectives).length > 0 ? "seeded" : "pending",
+    currentNodeID: Number(clientObjectives.nodeGraphID) > 0
+      ? Number(clientObjectives.nodeGraphID)
+      : null,
+    currentObjectiveID: Number(clientObjectives.objectiveChainID) > 0
+      ? Number(clientObjectives.objectiveChainID)
+      : null,
+    currentObjectiveKey:
+      seededCurrentObjective && seededCurrentObjective.key
+        ? String(seededCurrentObjective.key)
+        : null,
+    currentObjectiveTypeID:
+      seededCurrentObjective && Number(seededCurrentObjective.objectiveType) > 0
+        ? Number(seededCurrentObjective.objectiveType)
+        : null,
+    completedObjectiveIDs: [],
+    completedNodeIDs: [],
+    counters: {},
+    metadata: {
+      seededFromTemplate: true,
+      objectivesID: toInt(template && template.objectivesID, 0) || null,
+      objectiveChainID: Number(clientObjectives.objectiveChainID) > 0
+        ? Number(clientObjectives.objectiveChainID)
+        : null,
+      nodeGraphID: Number(clientObjectives.nodeGraphID) > 0
+        ? Number(clientObjectives.nodeGraphID)
+        : null,
+      blackboardParameters: Array.isArray(clientObjectives.blackboardParameters)
+        ? cloneValue(clientObjectives.blackboardParameters)
+        : [],
+      objectiveSummary: Object.keys(objectiveChain).length > 0
+        ? {
+          name: normalizeText(objectiveChain.name, "") || null,
+          tags: Array.isArray(objectiveChain.tags) ? cloneValue(objectiveChain.tags) : [],
+          objectiveKeys: seededObjectives
+            .map((objective) => normalizeText(objective && objective.key, ""))
+            .filter(Boolean),
+        }
+        : null,
+      objectiveTypeIDs: Array.isArray(objectiveMetadata.objectiveTypeIDs)
+        ? cloneValue(objectiveMetadata.objectiveTypeIDs)
+        : [],
+      nodeTypeIDs: Array.isArray(objectiveMetadata.nodeTypeIDs)
+        ? cloneValue(objectiveMetadata.nodeTypeIDs)
+        : [],
+      seededAtMs: nowMs,
+    },
+  };
+}
+
+function buildDefaultEnvironmentState(template, nowMs, definition = {}) {
+  if (definition.environmentState && typeof definition.environmentState === "object") {
+    return cloneValue(definition.environmentState);
+  }
+  const environmentTemplates = normalizeObject(template && template.environmentTemplates);
+  return {
+    seededAtMs: nowMs,
+    templates: Object.keys(environmentTemplates).length > 0
+      ? cloneValue(environmentTemplates)
+      : null,
+  };
+}
+
+function buildInstanceRecordFromDefinition(instanceID, template, definition = {}, nowMs = Date.now()) {
+  const solarSystemID = Math.max(0, toInt(definition.solarSystemID, 0));
+  const createdAtMs = nowMs;
+  const activatedAtMs = Math.max(0, toInt(definition.activatedAtMs, createdAtMs));
+  const expiresAtMs = Math.max(0, toInt(definition.expiresAtMs, 0));
+  const despawnAtMs = Math.max(0, toInt(definition.despawnAtMs, 0));
+
+  return {
+    instanceID,
+    templateID: template.templateID,
+    solarSystemID,
+    siteKey: normalizeText(definition.siteKey, "") || null,
+    lifecycleState: normalizeText(definition.lifecycleState, "seeded").toLowerCase(),
+    lifecycleReason: normalizeText(definition.lifecycleReason, "") || null,
+    instanceScope: normalizeText(definition.instanceScope, "shared").toLowerCase(),
+    siteFamily: normalizeText(definition.siteFamily, template.siteFamily || "unknown").toLowerCase(),
+    siteKind: normalizeText(definition.siteKind, template.siteKind || "unknown").toLowerCase(),
+    siteOrigin: normalizeText(definition.siteOrigin, template.siteOrigin || "unknown").toLowerCase(),
+    source: normalizeText(template.source, "unknown").toLowerCase(),
+    sourceDungeonID: template.sourceDungeonID || null,
+    archetypeID: template.archetypeID || null,
+    factionID: template.factionID || null,
+    difficulty: template.difficulty || null,
+    entryObjectTypeID: template.entryObjectTypeID || null,
+    dungeonNameID: template.dungeonNameID || null,
+    position: normalizePosition(definition.position),
+    ownership: normalizeOwnership(definition.ownership || definition),
+    timers: {
+      createdAtMs,
+      activatedAtMs,
+      expiresAtMs,
+      despawnAtMs,
+      lastUpdatedAtMs: nowMs,
+    },
+    roomStatesByKey: buildDefaultRoomStates(template, nowMs, definition),
+    gateStatesByKey: buildDefaultGateStates(template, nowMs, definition),
+    objectiveState: buildDefaultObjectiveState(template, nowMs, definition),
+    hazardState: definition.hazardState && typeof definition.hazardState === "object"
+      ? cloneValue(definition.hazardState)
+      : {},
+    environmentState: buildDefaultEnvironmentState(template, nowMs, definition),
+    spawnState: definition.spawnState && typeof definition.spawnState === "object"
+      ? cloneValue(definition.spawnState)
+      : {},
+    runtimeFlags: definition.runtimeFlags && typeof definition.runtimeFlags === "object"
+      ? cloneValue(definition.runtimeFlags)
+      : {},
+    metadata: definition.metadata && typeof definition.metadata === "object"
+      ? cloneValue(definition.metadata)
+      : {},
+  };
+}
+
+function normalizeTextFilterSet(values = []) {
+  const entries = Array.isArray(values) ? values : [values];
+  const normalized = [...new Set(entries
+    .map((entry) => normalizeText(entry, "").toLowerCase())
+    .filter(Boolean))];
+  return normalized.length > 0 ? new Set(normalized) : null;
+}
+
+function definitionsMatchActiveUniverseInstance(instance, definition, template) {
+  if (!instance || !definition || !template) {
+    return false;
+  }
+  if (!dungeonRuntimeState.isActiveLifecycleState(instance.lifecycleState)) {
+    return false;
+  }
+  if (normalizeText(instance.templateID, "") !== normalizeText(template.templateID, "")) {
+    return false;
+  }
+  if (normalizeText(instance.siteKey, "") !== normalizeText(definition.siteKey, "")) {
+    return false;
+  }
+  const existingHash = normalizeText(instance.metadata && instance.metadata.definitionHash, "");
+  const desiredHash = normalizeText(definition.metadata && definition.metadata.definitionHash, "");
+  return !!existingHash && existingHash === desiredHash;
+}
+
+function buildDungeonAuthorityFailure(systemIDs) {
+  if (typeof buildSolarAuthorityFailureForSystems !== "function") {
+    return null;
+  }
+  const failure = buildSolarAuthorityFailureForSystems(systemIDs, {
+    operation: "reconcileUniverseSeededInstances",
+  });
+  if (!failure) {
+    return null;
+  }
+  return {
+    ...failure,
+    errorMsg: "SOLAR_DUNGEON_AUTHORITY_DENIED",
+    reasonCode: failure.reasonCode || failure.errorMsg || "SOLAR_AUTHORITY_DENIED",
+  };
+}
+
+function reconcileUniverseSeededInstancesFast(definitions = [], reconcileOptions = {}) {
+  const normalizedDefinitions = (Array.isArray(definitions) ? definitions : [])
+    .filter((definition) => definition && definition.templateID && definition.siteKey)
+    .map((definition) => ({
+      ...definition,
+      solarSystemID: Math.max(0, toInt(definition.solarSystemID, 0)),
+      siteKey: normalizeText(definition.siteKey, ""),
+      templateID: normalizeText(definition.templateID, ""),
+    }))
+    .filter((definition) => definition.solarSystemID > 0 && definition.siteKey && definition.templateID);
+
+  const onProgress =
+    typeof reconcileOptions.onProgress === "function"
+      ? reconcileOptions.onProgress
+      : null;
+  let progressCurrent = 0;
+  let progressTotal = Math.max(1, normalizedDefinitions.length);
+  let progressLastPercent = -1;
+  function emitReconcileProgress(label, extras = {}) {
+    if (!onProgress) {
+      return;
+    }
+    const boundedCurrent = Math.max(0, Math.min(progressTotal, progressCurrent));
+    const percent = Math.floor((boundedCurrent / progressTotal) * 100);
+    if (percent === progressLastPercent && boundedCurrent < progressTotal) {
+      return;
+    }
+    progressLastPercent = percent;
+    try {
+      onProgress({
+        current: boundedCurrent,
+        total: progressTotal,
+        label,
+        desiredCount: normalizedDefinitions.length,
+        ...extras,
+      });
+    } catch (error) {
+      // Progress callbacks are UI-only; reconciliation must keep going.
+    }
+  }
+  function advanceReconcileProgress(amount, label, extras = {}) {
+    progressCurrent += Math.max(0, toInt(amount, 0));
+    emitReconcileProgress(label, extras);
+  }
+
+  const targetedSystemIDs = new Set(
+    (Array.isArray(reconcileOptions.systemIDs)
+      ? reconcileOptions.systemIDs
+      : normalizedDefinitions.map((definition) => definition.solarSystemID))
+      .map((entry) => Math.max(0, toInt(entry, 0)))
+      .filter((entry) => entry > 0),
+  );
+  const authorityFailure = buildDungeonAuthorityFailure([...targetedSystemIDs]);
+  if (authorityFailure) {
+    return {
+      ...authorityFailure,
+      desiredCount: normalizedDefinitions.length,
+      createdCount: 0,
+      retainedCount: 0,
+      replacedCount: 0,
+      removedCount: 0,
+    };
+  }
+
+  const siteFamilyFilter = normalizeTextFilterSet(reconcileOptions.siteFamilyFilter || []);
+  const spawnFamilyFilter = normalizeTextFilterSet(reconcileOptions.spawnFamilyFilter || []);
+  const siteOriginFilter = normalizeTextFilterSet(reconcileOptions.siteOriginFilter || []);
+  const desiredBySiteKey = new Map(
+    normalizedDefinitions.map((definition) => [definition.siteKey, definition]),
+  );
+  const templatesByID = new Map();
+  for (const definition of normalizedDefinitions) {
+    if (!templatesByID.has(definition.templateID)) {
+      const template = dungeonAuthority.getTemplateByID(definition.templateID);
+      if (!template) {
+        throw new Error(`Unknown dungeon template: ${definition.templateID}`);
+      }
+      templatesByID.set(definition.templateID, template);
+    }
+  }
+  emitReconcileProgress("Preparing dungeon instance reconciliation");
+
+  function isScopedUniverseInstance(instance) {
+    if (
+      !instance ||
+      !(instance.runtimeFlags && instance.runtimeFlags.universeSeeded === true)
+    ) {
+      return false;
+    }
+    if (
+      siteFamilyFilter &&
+      !siteFamilyFilter.has(normalizeText(instance.siteFamily, "").toLowerCase())
+    ) {
+      return false;
+    }
+    const instanceSpawnFamilyKey = normalizeText(
+      instance &&
+      instance.metadata &&
+      instance.metadata.spawnFamilyKey,
+      normalizeText(
+        instance &&
+        instance.spawnState &&
+        instance.spawnState.spawnFamilyKey,
+        instance && instance.siteFamily,
+      ),
+    ).toLowerCase();
+    if (spawnFamilyFilter && !spawnFamilyFilter.has(instanceSpawnFamilyKey)) {
+      return false;
+    }
+    if (
+      siteOriginFilter &&
+      !siteOriginFilter.has(normalizeText(instance.siteOrigin, "").toLowerCase())
+    ) {
+      return false;
+    }
+    return !(
+      targetedSystemIDs.size > 0 &&
+      !targetedSystemIDs.has(Math.max(0, toInt(instance.solarSystemID, 0)))
+    );
+  }
+
+  function buildNoopReconcileSummary() {
+    const state = dungeonRuntimeState.loadState();
+    const existingBySiteKey = new Map();
+    for (const [instanceID, rawInstance] of Object.entries(state && state.instancesByID || {})) {
+      if (!rawInstance || typeof rawInstance !== "object") {
+        continue;
+      }
+      const instance = rawInstance.instanceID != null
+        ? rawInstance
+        : {
+          ...rawInstance,
+          instanceID: toInt(instanceID, 0),
+        };
+      if (!isScopedUniverseInstance(instance)) {
+        continue;
+      }
+      existingBySiteKey.set(instance.siteKey, instance);
+    }
+
+    for (const siteKey of existingBySiteKey.keys()) {
+      if (!desiredBySiteKey.has(siteKey)) {
+        return null;
+      }
+    }
+
+    let retainedCount = 0;
+    for (const definition of normalizedDefinitions) {
+      const template = templatesByID.get(definition.templateID);
+      const existing = existingBySiteKey.get(definition.siteKey) || null;
+      if (!existing || !definitionsMatchActiveUniverseInstance(existing, definition, template)) {
+        return null;
+      }
+      retainedCount += 1;
+    }
+
+    return {
+      desiredCount: normalizedDefinitions.length,
+      createdCount: 0,
+      retainedCount,
+      replacedCount: 0,
+      removedCount: 0,
+    };
+  }
+
+  const noopSummary = buildNoopReconcileSummary();
+  if (noopSummary) {
+    progressCurrent = progressTotal;
+    emitReconcileProgress("Dungeon instance reconciliation already current", noopSummary);
+    return noopSummary;
+  }
+
+  const nowMs = Math.max(0, toInt(reconcileOptions.nowMs, Date.now()));
+  let removedBeforeCount = 0;
+  let createdCount = 0;
+  let retainedCount = 0;
+  let replacedCount = 0;
+  const table = cloneValue(dungeonRuntimeState.loadState());
+  table.instancesByID = table.instancesByID || {};
+  const instancesByID = table.instancesByID;
+  const instanceEntries = Object.entries(instancesByID);
+  progressCurrent = 0;
+  progressTotal = Math.max(
+    1,
+    instanceEntries.length + instanceEntries.length + normalizedDefinitions.length,
+  );
+  progressLastPercent = -1;
+  emitReconcileProgress("Scanning existing dungeon instances", {
+    existingCount: instanceEntries.length,
+  });
+
+  const existingBySiteKey = new Map();
+  let scannedEntries = 0;
+  function noteScannedEntry() {
+    scannedEntries += 1;
+    advanceReconcileProgress(1, "Scanning existing dungeon instances", {
+      existingCount: instanceEntries.length,
+      scannedEntries,
+      candidateCount: existingBySiteKey.size,
+    });
+  }
+  for (const [instanceID, rawInstance] of instanceEntries) {
+    const instance = dungeonRuntimeState.normalizeInstanceRecord({
+      ...rawInstance,
+      instanceID: toInt(rawInstance && rawInstance.instanceID, toInt(instanceID, 0)),
+    });
+    if (!isScopedUniverseInstance(instance)) {
+      noteScannedEntry();
+      continue;
+    }
+    existingBySiteKey.set(instance.siteKey, instance);
+    noteScannedEntry();
+  }
+
+  for (const [siteKey, instance] of existingBySiteKey.entries()) {
+    if (!desiredBySiteKey.has(siteKey)) {
+      removedBeforeCount += 1;
+      delete instancesByID[String(instance.instanceID)];
+    }
+    advanceReconcileProgress(1, "Removing stale dungeon instances", {
+      candidateCount: existingBySiteKey.size,
+      removedCount: removedBeforeCount,
+    });
+  }
+  if (instanceEntries.length > existingBySiteKey.size) {
+    advanceReconcileProgress(
+      instanceEntries.length - existingBySiteKey.size,
+      "Removing stale dungeon instances",
+      {
+        candidateCount: existingBySiteKey.size,
+        removedCount: removedBeforeCount,
+      },
+    );
+  }
+
+  let nextInstanceSequence = Math.max(1, toInt(table.nextInstanceSequence, 1));
+  let appliedDefinitions = 0;
+  for (const definition of normalizedDefinitions) {
+    appliedDefinitions += 1;
+    const template = templatesByID.get(definition.templateID);
+    const existing = existingBySiteKey.get(definition.siteKey) || null;
+    if (existing && definitionsMatchActiveUniverseInstance(existing, definition, template)) {
+      retainedCount += 1;
+      advanceReconcileProgress(1, "Applying dungeon instance definitions", {
+        appliedDefinitions,
+        retainedCount,
+      });
+      continue;
+    }
+    if (existing) {
+      removedBeforeCount += 1;
+      delete instancesByID[String(existing.instanceID)];
+      replacedCount += 1;
+    }
+    const nextInstanceID = nextInstanceSequence;
+    nextInstanceSequence += 1;
+    const created = buildInstanceRecordFromDefinition(
+      nextInstanceID,
+      template,
+      definition,
+      nowMs,
+    );
+    instancesByID[String(nextInstanceID)] = created;
+    createdCount += 1;
+    advanceReconcileProgress(1, "Applying dungeon instance definitions", {
+      appliedDefinitions,
+      createdCount,
+      retainedCount,
+      replacedCount,
+    });
+  }
+  table.nextInstanceSequence = nextInstanceSequence;
+
+  const writeSucceeded = dungeonRuntimeState.writeState(table);
+  if (writeSucceeded !== true) {
+    throw new Error("Failed to write dungeon runtime state during universe site reconcile.");
+  }
+
+  progressCurrent = progressTotal;
+  emitReconcileProgress("Dungeon instance reconciliation complete", {
+    createdCount,
+    retainedCount,
+    replacedCount,
+    removedCount: Math.max(0, removedBeforeCount - replacedCount),
+  });
+
+  return {
+    desiredCount: normalizedDefinitions.length,
+    createdCount,
+    retainedCount,
+    replacedCount,
+    removedCount: Math.max(0, removedBeforeCount - replacedCount),
+  };
 }
 
 function buildSystemBatches(systemIDs, batchSize) {
@@ -260,7 +940,7 @@ function summarizeRuntimeFamilies() {
   let generatedMiningCount = 0;
 
   for (const lifecycle of ACTIVE_RUNTIME_LIFECYCLES) {
-    for (const instance of dungeonRuntime.listInstancesByLifecycle(lifecycle, { full: true })) {
+    for (const instance of dungeonRuntime.listInstancesByLifecycle(lifecycle)) {
       if (
         !instance ||
         (instance.runtimeFlags && instance.runtimeFlags.shadowProviderSite === true)
@@ -506,10 +1186,9 @@ async function runSeed(nowMs) {
     label: "Applying dungeon runtime instances",
     desiredSiteCount: allDefinitions.length,
   }));
-  const instanceSummary = dungeonRuntime.reconcileUniverseSeededInstances(allDefinitions, {
+  const instanceSummary = reconcileUniverseSeededInstances(allDefinitions, {
     systemIDs,
     nowMs,
-    skipNoopReconcileWrite: status.fullUpToDate === true,
     onProgress(progress) {
       applyInstanceProgressTotal = Math.max(
         applyInstanceProgressTotal,

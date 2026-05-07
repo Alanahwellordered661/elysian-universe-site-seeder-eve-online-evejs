@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/readme/hero-universe-site-seeder-v2.svg" alt="Elysian Universe Site Seeder banner">
+  <img src="assets/readme/hero-universe-site-seeder-v3.svg" alt="Elysian Universe Site Seeder banner">
 </p>
 
 <h1 align="center">Elysian Universe Site Seeder</h1>
@@ -40,15 +40,15 @@
 <table>
   <tr>
     <td align="center"><strong>39,570</strong><br>desired universe sites</td>
-    <td align="center"><strong>8.287s</strong><br>full seeder reconcile</td>
-    <td align="center"><strong>8,490</strong><br>systems loaded</td>
-    <td align="center"><strong>0</strong><br>created / replaced / removed</td>
+    <td align="center"><strong>10.798s</strong><br>cold full rebuild</td>
+    <td align="center"><strong>39,570</strong><br>instances created</td>
+    <td align="center"><strong>1,656</strong><br>mining rows rebuilt</td>
   </tr>
   <tr>
+    <td align="center"><strong>8.095s</strong><br>current-state verify</td>
+    <td align="center"><strong>8,490</strong><br>systems loaded</td>
     <td align="center"><strong>6,057</strong><br>site templates</td>
-    <td align="center"><strong>23</strong><br>spawn families</td>
-    <td align="center"><strong>14.846s</strong><br>full CLI wall time</td>
-    <td align="center"><strong>4.45x</strong><br>faster than the old receipt</td>
+    <td align="center"><strong>3.42x</strong><br>faster cold rebuild</td>
   </tr>
 </table>
 
@@ -96,23 +96,26 @@ line tools on macOS or build-essential/pkg-config packages on Linux.
 ## Full Universe Scale
 
 <p align="center">
-  <img src="assets/readme/universe-scale-v2.svg" alt="Full universe site seed scale numbers">
+  <img src="assets/readme/universe-scale-v3.svg" alt="Full universe site seed scale numbers">
 </p>
 
 This is built for the big EVE JS universe state, not a toy demo. The current
-full-state pass is absurdly fast: it walks the full universe, confirms every
-seeded site, and exits with zero churn.
+full rebuild is absurdly fast: it starts from an empty runtime, builds every
+persistent universe site, writes the generated mining child-state rows, and
+finishes in about ten seconds of seeder time on a single node.
 
 | Dataset / operation | Result |
 | --- | ---: |
-| Full seeder reconcile | 8.287s |
-| Full CLI wall time | 14.846s |
-| Previous published reconcile receipt | 36.887s |
-| Speed-up vs previous receipt | 4.45x |
+| Cold full rebuild, empty runtime state | 10.798s |
+| Cold full rebuild CLI wall time | 14.389s |
+| Current-state force verify / reconcile | 8.095s |
+| Current-state CLI wall time | 13.627s |
+| Previous version full reconcile | 36.887s |
+| Speed-up vs previous version | 3.42x cold rebuild / 4.56x current verify |
 | Desired persistent universe sites | 39,570 |
-| Retained seeded instances | 39,570 |
-| Created / replaced / removed instances | 0 / 0 / 0 |
-| Mining rows created / removed | 0 / 0 |
+| Instances created during cold rebuild | 39,570 |
+| Mining child-state rows rebuilt | 1,656 |
+| Current-state instances retained | 39,570 |
 | Broad persistent definitions | 39,432 |
 | Generated mining definitions | 138 |
 | EVE systems loaded by runtime | 8,490 |
@@ -128,9 +131,10 @@ seeded site, and exits with zero churn.
 | Local dungeon authority graph | 64.26MB |
 | Local sharded mining state | 97.02MB |
 
-Numbers are from a full public-entrypoint benchmark on May 7, 2026 against the
+Numbers are from full public-entrypoint benchmarks on May 7, 2026 against the
 current EVE JS universe data, using `--force-reseed-universe --force-live
---batch-size 192`.
+--batch-size 192`. The cold rebuild benchmark cleared the dungeon runtime and
+generated mining runtime first, then restored the working data after the run.
 
 ## The App
 
