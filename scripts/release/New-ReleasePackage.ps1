@@ -8,6 +8,7 @@ $ErrorActionPreference = "Stop"
 $script:Root = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot "..\.."))
 $script:DistRoot = Join-Path $script:Root "release"
 $script:PackageRoot = Join-Path $script:DistRoot $PackageName
+$script:ReleaseBinarySource = $null
 
 function Resolve-FullPath {
     param([Parameter(Mandatory = $true)][string]$Path)
@@ -38,6 +39,10 @@ function Copy-AllowlistedFile {
     param([Parameter(Mandatory = $true)][string]$RelativePath)
 
     $source = Join-Path $script:Root $RelativePath
+    if ($RelativePath -eq "bin\UniverseSiteSeeder.exe" -and $script:ReleaseBinarySource) {
+        $source = $script:ReleaseBinarySource
+    }
+
     if (-not (Test-Path -LiteralPath $source -PathType Leaf)) {
         throw "Missing required release file: $RelativePath"
     }
@@ -52,6 +57,7 @@ function Ensure-ReleaseBinary {
     $exe = Join-Path $script:Root "bin\UniverseSiteSeeder.exe"
     if ($SkipBuild) {
         if (Test-Path -LiteralPath $exe -PathType Leaf) {
+            $script:ReleaseBinarySource = $exe
             return
         }
 
@@ -74,7 +80,13 @@ function Ensure-ReleaseBinary {
     }
 
     New-Item -ItemType Directory -Force -Path (Join-Path $script:Root "bin") | Out-Null
-    Copy-Item -LiteralPath (Join-Path $script:Root "target\release\universe-site-seed.exe") -Destination $exe -Force
+    $builtExe = Join-Path $script:Root "target\release\universe-site-seed.exe"
+    $script:ReleaseBinarySource = $builtExe
+    try {
+        Copy-Item -LiteralPath $builtExe -Destination $exe -Force
+    } catch {
+        Write-Warning "Could not refresh bin\UniverseSiteSeeder.exe, using the freshly built release binary for the package: $($_.Exception.Message)"
+    }
 }
 
 Ensure-ReleaseBinary
@@ -89,14 +101,21 @@ if (Test-Path -LiteralPath $packageFull) {
 New-Item -ItemType Directory -Force -Path $packageFull | Out-Null
 
 $releaseFiles = @(
+    "Cargo.toml",
+    "Cargo.lock",
     "Install.bat",
+    "Install.sh",
     "StartUniverseSeeder.bat",
+    "StartUniverseSeeder.sh",
     "README.md",
     "NOTICE",
     "LICENSE",
     "AUTHORS.md",
-    "assets\readme\hero-universe-site-seeder-v1.svg",
-    "assets\readme\universe-scale-v1.svg",
+    "seed_universe_sites.js",
+    "src\main.rs",
+    "data\spec\dungeonSpawnProfiles.json",
+    "assets\readme\hero-universe-site-seeder-v3.svg",
+    "assets\readme\universe-scale-v3.svg",
     "assets\readme\install-one-click-v1.svg",
     "assets\readme\evejs-site-flow-v1.svg",
     "assets\readme\unix-quickstart-v1.svg",
