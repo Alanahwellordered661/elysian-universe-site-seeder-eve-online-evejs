@@ -1,6 +1,6 @@
 <svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
   <title id="title">Universe-scale site seeding benchmark</title>
-  <desc id="desc">Large benchmark card showing a 0.262 second standalone engine cold full public EVE JS universe site rebuild, 0.917 second CLI wall time, and 0.438 second current-state engine verify.</desc>
+  <desc id="desc">Large benchmark card showing a 0.337 second standalone engine cold full public EVE JS universe site rebuild, 1.271 second CLI wall time, and 0.465 second current-state engine verify.</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#050914"/>
@@ -38,7 +38,7 @@
 
   <g>
     <rect x="120" y="214" width="408" height="178" rx="18" fill="#0b2935" stroke="#2af6ff" stroke-width="2"/>
-    <text x="154" y="287" fill="#2af6ff" font-family="JetBrains Mono, Consolas, monospace" font-size="58" font-weight="900">0.262s</text>
+    <text x="154" y="287" fill="#2af6ff" font-family="JetBrains Mono, Consolas, monospace" font-size="58" font-weight="900">0.337s</text>
     <text x="156" y="329" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="27" font-weight="900">standalone engine</text>
     <text x="156" y="362" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="21">cold full rebuild core</text>
   </g>
@@ -50,7 +50,7 @@
   </g>
   <g>
     <rect x="1072" y="214" width="336" height="178" rx="18" fill="#331426" stroke="#ff7aad" stroke-width="2"/>
-    <text x="1106" y="287" fill="#ff7aad" font-family="JetBrains Mono, Consolas, monospace" font-size="58" font-weight="900">0.438s</text>
+    <text x="1106" y="287" fill="#ff7aad" font-family="JetBrains Mono, Consolas, monospace" font-size="58" font-weight="900">0.465s</text>
     <text x="1108" y="329" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="27" font-weight="900">engine verify</text>
     <text x="1108" y="362" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="21">current-state force pass</text>
   </g>
@@ -75,7 +75,7 @@
   </g>
   <g>
     <rect x="1074" y="438" width="334" height="150" rx="18" fill="#101d2e" stroke="#355b84" stroke-width="2"/>
-    <text x="1104" y="498" fill="#51ffd0" font-family="JetBrains Mono, Consolas, monospace" font-size="42" font-weight="900">67.90x</text>
+    <text x="1104" y="498" fill="#51ffd0" font-family="JetBrains Mono, Consolas, monospace" font-size="42" font-weight="900">52.79x</text>
     <text x="1106" y="540" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="23" font-weight="900">faster cold rebuild</text>
     <text x="1106" y="568" fill="#c5d1df" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18">vs public EVE JS</text>
   </g>
@@ -109,11 +109,11 @@
   <path d="M120 742H1408" stroke="#2c4669" stroke-width="2"/>
   <text x="120" y="772" fill="#eef7ff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="20" font-weight="900">MEASURED MAY 7, 2026 - PUBLIC ENTRYPOINT - STANDALONE WRITER</text>
   <text x="120" y="802" font-family="JetBrains Mono, Consolas, monospace" font-size="18" font-weight="800">
-    <tspan fill="#7ce7ff">0.917s</tspan><tspan fill="#c5d1df"> cold CLI wall</tspan>
+    <tspan fill="#7ce7ff">1.271s</tspan><tspan fill="#c5d1df"> cold CLI wall</tspan>
     <tspan fill="#355b84"> / </tspan>
-    <tspan fill="#ffd27a">2.163s</tspan><tspan fill="#c5d1df"> current CLI wall</tspan>
+    <tspan fill="#ffd27a">2.489s</tspan><tspan fill="#c5d1df"> current CLI wall</tspan>
     <tspan fill="#355b84"> / </tspan>
-    <tspan fill="#ff7aad">40.62x</tspan><tspan fill="#c5d1df"> current verify vs public EVE JS</tspan>
+    <tspan fill="#ff7aad">38.26x</tspan><tspan fill="#c5d1df"> current verify vs public EVE JS</tspan>
   </text>
   <text x="120" y="830" font-family="JetBrains Mono, Consolas, monospace" font-size="18" font-weight="800">
     <tspan fill="#7ce7ff">347.56MB</tspan><tspan fill="#c5d1df"> runtime state</tspan>

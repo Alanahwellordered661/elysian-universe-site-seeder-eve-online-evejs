@@ -36,6 +36,36 @@ const SECURITY_BAND_ORDER = {
   wormhole: 3,
 };
 const PUBLIC_DATA_EPOCH_MS = Date.UTC(2026, 0, 1, 0, 0, 0);
+const PUBLIC_UNIVERSE_SITE_ID_SYSTEM_STRIDE = 1_000;
+const PUBLIC_UNIVERSE_SITE_ID_BASES = Object.freeze({
+  combat: 5_300_000_000_000,
+  combat_anomaly: 5_350_000_000_000,
+  data: 5_400_000_000_000,
+  drifter_observatory: 5_450_000_000_000,
+  drifter_unidentified_wormhole: 5_475_000_000_000,
+  drifter_space_sentinel_hive: 5_476_000_000_000,
+  drifter_space_barbican_hive: 5_477_000_000_000,
+  drifter_space_vidette_hive: 5_478_000_000_000,
+  drifter_space_conflux_hive: 5_479_000_000_000,
+  drifter_space_redoubt_hive: 5_480_000_000_000,
+  drifter_space_reckoning_labyrinth: 5_481_000_000_000,
+  drifter_space_reckoning_nexus: 5_482_000_000_000,
+  drifter_occupied_tabbetzur_field_rescue: 5_483_000_000_000,
+  drifter_occupied_tabbetzur_deathless_research_outpost: 5_484_000_000_000,
+  drifter_vigilance_point: 5_485_000_000_000,
+  drifter_observatory_infiltration: 5_486_000_000_000,
+  drifter_deepflow_rift_pochven: 5_487_000_000_000,
+  drifter_deepflow_rift_knownspace: 5_488_000_000_000,
+  relic: 5_500_000_000_000,
+  ghost: 5_600_000_000_000,
+  combat_hacking: 5_700_000_000_000,
+  ore: 5_800_000_000_000,
+  gas: 5_900_000_000_000,
+});
+const PUBLIC_MINING_ICE_SITE_ITEM_ID_BASE = 5_100_000_000_000;
+const PUBLIC_MINING_GAS_SITE_ITEM_ID_BASE = 5_200_000_000_000;
+const PUBLIC_MINING_SITE_ID_SYSTEM_STRIDE = 10_000;
+const PUBLIC_MINING_SITE_ID_SITE_STRIDE = 100;
 const USE_STANDALONE_OFFLINE_WRITER = true;
 
 function formatTimestamp(date = new Date()) {
@@ -1352,10 +1382,42 @@ function buildPublicPosition(systemID, slotIndex, family) {
   };
 }
 
+function getPublicUniverseSiteProviderID(siteKind) {
+  return normalizeText(siteKind, "signature").toLowerCase() === "anomaly"
+    ? "sceneAnomalySite"
+    : "sceneSignatureSite";
+}
+
+function buildPublicUniverseSiteID(family, systemID, slotIndex) {
+  const base = PUBLIC_UNIVERSE_SITE_ID_BASES[normalizeText(family, "").toLowerCase()];
+  if (!base) {
+    return 0;
+  }
+  return base +
+    (toInt(systemID, 0) * PUBLIC_UNIVERSE_SITE_ID_SYSTEM_STRIDE) +
+    (Math.max(0, toInt(slotIndex, 0)) + 1);
+}
+
+function buildPublicMiningSiteID(family, systemID, siteIndex = 0) {
+  const base = normalizeText(family, "").toLowerCase() === "gas"
+    ? PUBLIC_MINING_GAS_SITE_ITEM_ID_BASE
+    : PUBLIC_MINING_ICE_SITE_ITEM_ID_BASE;
+  return base +
+    (toInt(systemID, 0) * PUBLIC_MINING_SITE_ID_SYSTEM_STRIDE) +
+    (Math.max(0, toInt(siteIndex, 0)) * PUBLIC_MINING_SITE_ID_SITE_STRIDE);
+}
+
+function buildPublicMiningChildEntityID(family, systemID, siteIndex, memberIndex) {
+  return buildPublicMiningSiteID(family, systemID, siteIndex) +
+    Math.max(0, toInt(memberIndex, 0)) +
+    1;
+}
+
 function buildPublicDefinitionHash(definition) {
   return stableHashText(JSON.stringify({
     solarSystemID: definition.solarSystemID,
     siteKey: definition.siteKey,
+    siteID: definition.siteID,
     templateID: definition.templateID,
     siteFamily: definition.siteFamily,
     siteKind: definition.siteKind,
@@ -1375,11 +1437,16 @@ function buildPublicSiteDefinition(family, profile, system, band, slotIndex, now
       : [];
   const siteKind = normalizeText(kindFilters[0], family.includes("anomaly") ? "anomaly" : "signature").toLowerCase();
   const siteOrigin = normalizeText(profile && profile.siteOrigin, "universe_dungeon").toLowerCase();
+  const providerID = getPublicUniverseSiteProviderID(siteKind);
+  const siteID = buildPublicUniverseSiteID(family, systemID, slotIndex);
   const templateID = `public:${family}:${siteKind}:v1`;
-  const siteKey = `public:${siteOrigin}:${family}:${systemID}:${slotIndex}`;
+  const siteKey = siteID > 0
+    ? `${providerID}:${systemID}:${siteID}`
+    : `public:${siteOrigin}:${family}:${systemID}:${slotIndex}`;
   const definition = {
     templateID,
     solarSystemID: systemID,
+    siteID,
     siteKey,
     siteFamily: family,
     siteKind,
@@ -1393,15 +1460,20 @@ function buildPublicSiteDefinition(family, profile, system, band, slotIndex, now
       publicEveJsSeeder: true,
     },
     spawnState: {
+      siteID,
+      providerID,
       spawnFamilyKey: family,
       securityBand: band,
       slotIndex,
       systemName: normalizeText(system && system.solarSystemName, ""),
     },
     metadata: {
+      siteID,
+      providerID,
       spawnFamilyKey: family,
       securityBand: band,
       slotIndex,
+      label: `${family} ${siteKind}`,
       generatedBy: "elysian-universe-site-seeder",
       publicEveJs: true,
       seededAtMs: nowMs,
@@ -1458,7 +1530,7 @@ function buildPublicBroadDefinitions(nowMs) {
 }
 
 function buildGeneratedMiningMember(systemID, siteIndex, memberIndex, family, nowMs) {
-  const entityID = 970000000000 + (systemID * 1000) + (siteIndex * 100) + memberIndex;
+  const entityID = buildPublicMiningChildEntityID(family, systemID, siteIndex, memberIndex);
   const typeIDs = family === "gas"
     ? [30370, 30371, 30372, 30373]
     : [1230, 1228, 1224, 18, 1226, 20];
@@ -1469,6 +1541,9 @@ function buildGeneratedMiningMember(systemID, siteIndex, memberIndex, family, no
     visualTypeID: typeID,
     beltID: 0,
     fieldStyleID: null,
+    siteID: buildPublicMiningSiteID(family, systemID, siteIndex),
+    siteIndex,
+    family,
     yieldTypeID: typeID,
     yieldKind: family,
     unitVolume: family === "gas" ? 10 : 0.1,
@@ -1506,16 +1581,19 @@ function buildPublicGeneratedMiningDefinitions(nowMs) {
     }
     seen.add(systemID);
     const band = getSecurityBand(system);
-    const family = band === "wormhole" ? "gas" : "ore";
+    const family = band === "wormhole" ? "gas" : "ice";
+    const siteIndex = 0;
+    const siteID = buildPublicMiningSiteID(family, systemID, siteIndex);
     const members = [];
     for (let memberIndex = 0; memberIndex < 12; memberIndex += 1) {
-      members.push(buildGeneratedMiningMember(systemID, definitions.length, memberIndex, family, nowMs));
+      members.push(buildGeneratedMiningMember(systemID, siteIndex, memberIndex, family, nowMs));
     }
     const templateID = `public:generated-mining:${family}:v1`;
-    const siteKey = `public:generatedmining:${family}:${systemID}:0`;
+    const siteKey = `generatedMining:${systemID}:${siteID}`;
     const definition = {
       templateID,
       solarSystemID: systemID,
+      siteID,
       siteKey,
       siteFamily: family,
       siteKind: "anomaly",
@@ -1530,9 +1608,12 @@ function buildPublicGeneratedMiningDefinitions(nowMs) {
         generatedMining: true,
       },
       spawnState: {
+        siteID,
+        providerID: "generatedMining",
         spawnFamilyKey: family,
         securityBand: band,
-        slotIndex: 0,
+        slotIndex: siteIndex,
+        siteIndex,
         members,
         memberCount: members.length,
         activeMemberCount: members.length,
@@ -1540,9 +1621,13 @@ function buildPublicGeneratedMiningDefinitions(nowMs) {
         totalRemainingQuantity: members.reduce((sum, member) => sum + member.remainingQuantity, 0),
       },
       metadata: {
+        siteID,
+        providerID: "generatedMining",
         spawnFamilyKey: family,
         securityBand: band,
-        slotIndex: 0,
+        slotIndex: siteIndex,
+        siteIndex,
+        label: `${family === "gas" ? "Gas" : "Ice"} Field ${siteIndex + 1}`,
         generatedBy: "elysian-universe-site-seeder",
         publicEveJs: true,
         seededAtMs: nowMs,

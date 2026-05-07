@@ -40,15 +40,15 @@
 <table>
   <tr>
     <td align="center"><strong>39,570</strong><br>desired universe sites</td>
-    <td align="center"><strong>0.262s</strong><br>standalone engine</td>
+    <td align="center"><strong>0.337s</strong><br>standalone engine</td>
     <td align="center"><strong>39,570</strong><br>instances created</td>
     <td align="center"><strong>1,656</strong><br>mining rows rebuilt</td>
   </tr>
   <tr>
-    <td align="center"><strong>0.438s</strong><br>current-state engine</td>
+    <td align="center"><strong>0.465s</strong><br>current-state engine</td>
     <td align="center"><strong>8,490</strong><br>systems loaded</td>
     <td align="center"><strong>6,040</strong><br>authority templates</td>
-    <td align="center"><strong>67.90x</strong><br>faster cold rebuild</td>
+    <td align="center"><strong>52.79x</strong><br>faster cold rebuild</td>
   </tr>
 </table>
 
@@ -107,12 +107,12 @@ of seeder-engine time on a single node.
 
 | Dataset / operation | Result |
 | --- | ---: |
-| Cold full rebuild, empty runtime state, engine time | 0.262s |
-| Cold full rebuild, full Node CLI wall time | 0.917s |
-| Current-state force verify / reconcile, engine time | 0.438s |
-| Current-state force verify / reconcile, full Node CLI wall time | 2.163s |
+| Cold full rebuild, empty runtime state, engine time | 0.337s |
+| Cold full rebuild, full Node CLI wall time | 1.271s |
+| Current-state force verify / reconcile, engine time | 0.465s |
+| Current-state force verify / reconcile, full Node CLI wall time | 2.489s |
 | Upstream public EVE JS stored seed receipt | 17.791s |
-| Speed-up vs upstream public receipt | 67.90x cold rebuild / 40.62x current verify |
+| Speed-up vs upstream public receipt | 52.79x cold rebuild / 38.26x current verify |
 | Desired persistent universe sites | 39,570 |
 | Instances created during cold rebuild | 39,570 |
 | Mining child-state rows rebuilt | 1,656 |
